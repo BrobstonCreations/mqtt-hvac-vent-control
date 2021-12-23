@@ -1,0 +1,18 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "comment-type": [true],
+        "quotemark": [true, "single"],
+        "one-variable-per-declaration": false,
+        "no-bitwise": false,
+        "interface-name": [true, "never-prefix"],
+        "typedef": [true, "call-signature", "arrow-call-signature", "parameter", "arrow-parameter", "property-declaration", "member-variable-declaration", "object-destructuring", "array-destructuring"],
+        "no-console": [true, "warning"],
+        "no-unused-expression": [true, "allow-fast-null-checks"]
+    },
+    "rulesDirectory": []
+}
