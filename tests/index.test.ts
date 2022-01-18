@@ -77,7 +77,7 @@ describe('index', () => {
         });
 
         client.on('message', (topic: string, message: string) => {
-            //should get a message that thermostat.targetTemperatureStateTopic became '73'
+            //should get a message that thermostat.targetTemperatureCommandTopic became '73'
             //should get a message that vent.commandTopic become 'open'
             console.log('topic: ', topic, ' message: ', message);
             done();
