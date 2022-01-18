@@ -1,6 +1,8 @@
 import {AsyncMqttClient, connect} from 'async-mqtt';
 
 import Options from './types/Options';
+import Room from './types/Room';
+import Vent from './types/Vent';
 
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
@@ -11,6 +13,9 @@ export const start = async (
     options: Options = getOptionsFromEnvironmentOrFile(),
 ): Promise<void> => {
     const {
+        configuration: {
+            rooms,
+        },
         log,
         mqtt: {
             host,
@@ -22,13 +27,22 @@ export const start = async (
 
     client = connect(`tcp://${host}:${port}`, {username, password});
 
-    // const promises = options.config.rooms.map((room) => {
-    //     return room.vents.map(() => {
-    //         client.subscribe()
-    //     });
-    // });
-    //
-    // await Promise.all(promises);
+    const promises = rooms.map((room: Room) => {
+        const ventStateTopics = room.vents.reduce((acc: string[], obj: Vent) => {
+            return [
+                ...acc,
+                obj.openedState,
+                obj.closedState,
+            ];
+        }, []);
+        return client.subscribe([
+            ...ventStateTopics,
+            room.actualTemperatureStateTopic,
+            room.targetTemperatureCommandTopic,
+        ]);
+    });
+
+    await Promise.all(promises);
 
     if (log) {
         setupLogging(client);
