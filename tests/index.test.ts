@@ -1,6 +1,6 @@
 import {AsyncMqttClient, connectAsync} from 'async-mqtt';
 import {Chance} from 'chance';
-import {closeSync, openSync, unlinkSync, writeFileSync} from 'fs';
+import {closeSync, openSync, unlinkSync} from 'fs';
 import {Server} from 'mosca';
 
 import {createServerAsync} from './utils/moscaHelper';
@@ -44,27 +44,33 @@ describe('index', () => {
     });
 
     it('should', async (done: () => void) => {
-        const room = {
-            name: chance.string(),
-            targetTemperatureCommandTopic: chance.string(),
-            temperatureStateTopic: chance.string(),
-            vents: [
-                {
-                    closePayload: chance.string(),
-                    closedState: chance.string(),
-                    name: chance.string(),
-                    openPayload: chance.string(),
-                    openedState: chance.string(),
-                    ventCommandTopic: chance.string(),
-                    ventStateTopic: chance.string(),
-                },
-            ],
-        };
         const options = {
-            config: {
+            configuration: {
                 rooms: [
-                    room,
+                    {
+                        actualTemperatureStateTopic: chance.string(),
+                        name: chance.string(),
+                        targetTemperatureCommandTopic: chance.string(),
+                        targetTemperatureStateTopic: chance.string(),
+                        vents: [
+                            {
+                                closePayload: chance.string(),
+                                closedState: chance.string(),
+                                commandTopic: chance.string(),
+                                name: chance.string(),
+                                openPayload: chance.string(),
+                                openedState: chance.string(),
+                                stateTopic: chance.string(),
+                            },
+                        ],
+                    },
                 ],
+                thermostat: {
+                    actualTemperatureStateTopic: chance.string(),
+                    name: chance.string(),
+                    targetTemperatureCommandTopic: chance.string(),
+                    targetTemperatureStateTopic: chance.string(),
+                },
             },
             log: false,
             mqtt,
