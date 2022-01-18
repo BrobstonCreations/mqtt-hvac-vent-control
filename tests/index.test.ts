@@ -44,38 +44,39 @@ describe('index', () => {
     });
 
     it('should', async (done: () => void) => {
-        const options = {
+        const vent = {
+            closePayload: chance.string(),
+            closedState: chance.string(),
+            commandTopic: chance.string(),
+            name: chance.string(),
+            openPayload: chance.string(),
+            openedState: chance.string(),
+            stateTopic: chance.string(),
+        };
+        const room = {
+            actualTemperatureStateTopic: chance.string(),
+            name: chance.string(),
+            targetTemperatureCommandTopic: chance.string(),
+            targetTemperatureStateTopic: chance.string(),
+            vents: [vent],
+        };
+        const thermostat = {
+            actualTemperatureStateTopic: chance.string(),
+            name: chance.string(),
+            targetTemperatureCommandTopic: chance.string(),
+            targetTemperatureStateTopic: chance.string(),
+        };
+
+        await start({
             configuration: {
-                rooms: [
-                    {
-                        actualTemperatureStateTopic: chance.string(),
-                        name: chance.string(),
-                        targetTemperatureCommandTopic: chance.string(),
-                        targetTemperatureStateTopic: chance.string(),
-                        vents: [
-                            {
-                                closePayload: chance.string(),
-                                closedState: chance.string(),
-                                commandTopic: chance.string(),
-                                name: chance.string(),
-                                openPayload: chance.string(),
-                                openedState: chance.string(),
-                                stateTopic: chance.string(),
-                            },
-                        ],
-                    },
-                ],
-                thermostat: {
-                    actualTemperatureStateTopic: chance.string(),
-                    name: chance.string(),
-                    targetTemperatureCommandTopic: chance.string(),
-                    targetTemperatureStateTopic: chance.string(),
-                },
+                rooms: [room],
+                thermostat,
             },
             log: false,
             mqtt,
-        };
+        });
 
-        await start(options);
+        await client.publish(thermostat.targetTemperatureStateTopic, '72');
+        await client.publish(thermostat.actualTemperatureStateTopic, '72');
     });
 });
