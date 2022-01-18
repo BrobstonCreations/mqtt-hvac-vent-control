@@ -1,8 +1,8 @@
-import Config from '../types/Config';
-import Mqtt from '../types/Mqtt';
+import Configuration from './Configuration';
+import Mqtt from './Mqtt';
 
 export default interface Options {
-    config: Config;
+    configuration: Configuration;
     log: boolean;
     mqtt: Mqtt;
 }

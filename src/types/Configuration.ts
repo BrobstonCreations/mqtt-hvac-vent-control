@@ -1,5 +1,7 @@
-import Room from '../types/Room';
+import Room from './Room';
+import Thermostat from './Thermostat';
 
-export default interface Config {
+export default interface Configuration {
     rooms: Room[];
+    thermostat: Thermostat[];
 }

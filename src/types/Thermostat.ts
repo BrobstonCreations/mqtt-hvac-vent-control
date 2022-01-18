@@ -1,9 +1,6 @@
-import Vent from './Vent';
-
-export default interface Room {
+export default interface Thermostat {
     actualTemperatureStateTopic: string;
     name: string;
     targetTemperatureCommandTopic: string;
     targetTemperatureStateTopic: string;
-    vents: Vent[];
 }
