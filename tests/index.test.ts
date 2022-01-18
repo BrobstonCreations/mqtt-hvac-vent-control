@@ -44,39 +44,32 @@ describe('index', () => {
     });
 
     it('should', async (done: () => void) => {
-        const currentRoomTemperature = 71;
-        const targetRoomTemperature = 72;
-        const expectedTopic = `vent/living_room_east`;
-        const expectedMessage = 'open';
+        const room = {
+            name: chance.string(),
+            targetTemperatureCommandTopic: chance.string(),
+            temperatureStateTopic: chance.string(),
+            vents: [
+                {
+                    closePayload: chance.string(),
+                    closedState: chance.string(),
+                    name: chance.string(),
+                    openPayload: chance.string(),
+                    openedState: chance.string(),
+                    ventCommandTopic: chance.string(),
+                    ventStateTopic: chance.string(),
+                },
+            ],
+        };
         const options = {
             config: {
                 rooms: [
-                    {
-                        name: 'Living Room',
-                        target_command_topic: '',
-                        temperature_state_topic: '',
-                        vents: [
-                            {
-                                closeMessage: 'close',
-                                name: 'East Vent',
-                                openMessage: expectedMessage,
-                                topic: expectedTopic,
-                            },
-                        ],
-                    },
+                    room,
                 ],
             },
-            log: true,
+            log: false,
             mqtt,
         };
 
         await start(options);
-
-        client.on('message', (topic: string, message: string) => {
-            expect(topic).toBe(expectedTopic);
-            expect(message.toString()).toBe(expectedMessage);
-            done();
-        });
-        await client.publish(expectedTopic, expectedMessage);
     });
 });
