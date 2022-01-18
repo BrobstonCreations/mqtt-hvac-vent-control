@@ -1,4 +1,3 @@
-const aedes = require('aedes')();
 import {createServer, Server} from 'aedes-server-factory';
 
 import Mqtt from '../../src/types/Mqtt';
@@ -9,6 +8,7 @@ export const createServerAsync = ({
     username,
 }: Mqtt): Promise<Server> => {
     return new Promise((resolve: (server: Server) => void): void  => {
+        const aedes = require('aedes')();
         const server = createServer(aedes);
         server.listen(port, () => {
             if (username && password) {
@@ -19,6 +19,9 @@ export const createServerAsync = ({
                 };
             }
             resolve(server);
+        });
+        server.on('close', () => {
+            aedes.close();
         });
     });
 };

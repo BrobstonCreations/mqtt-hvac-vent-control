@@ -16,9 +16,9 @@ describe('index', () => {
     const optionsFilePath = `${__dirname}/options.json`;
     const mqtt = {
         host: 'localhost',
-        password: chance.string({alpha: true}),
+        password: chance.string(),
         port: 1883,
-        username: chance.string({alpha: true}),
+        username: chance.string(),
     };
 
     let server: Server,
@@ -46,21 +46,21 @@ describe('index', () => {
             closePayload: chance.string({alpha: true}),
             closedState: chance.string({alpha: true}),
             commandTopic: chance.string({alpha: true}),
-            name: chance.string({alpha: true}),
+            name: chance.string(),
             openPayload: chance.string({alpha: true}),
             openedState: chance.string({alpha: true}),
             stateTopic: chance.string({alpha: true}),
         };
         const room = {
             actualTemperatureStateTopic: chance.string({alpha: true}),
-            name: chance.string({alpha: true}),
+            name: chance.string(),
             targetTemperatureCommandTopic: chance.string({alpha: true}),
             targetTemperatureStateTopic: chance.string({alpha: true}),
             vents: [vent],
         };
         const thermostat = {
             actualTemperatureStateTopic: chance.string({alpha: true}),
-            name: chance.string({alpha: true}),
+            name: chance.string(),
             targetTemperatureCommandTopic: chance.string({alpha: true}),
             targetTemperatureStateTopic: chance.string({alpha: true}),
         };
