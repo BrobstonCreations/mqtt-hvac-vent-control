@@ -43,26 +43,26 @@ describe('index', () => {
 
     it('should', async (done: () => void) => {
         const vent = {
-            closePayload: chance.string({alpha: true}),
-            closedState: chance.string({alpha: true}),
-            commandTopic: chance.string({alpha: true}),
-            name: chance.string(),
-            openPayload: chance.string({alpha: true}),
-            openedState: chance.string({alpha: true}),
-            stateTopic: chance.string({alpha: true}),
+            closePayload: chance.word(),
+            closedState: chance.word(),
+            commandTopic: chance.word(),
+            name: chance.word(),
+            openPayload: chance.word(),
+            openedState: chance.word(),
+            stateTopic: chance.word(),
         };
         const room = {
-            actualTemperatureStateTopic: chance.string({alpha: true}),
-            name: chance.string(),
-            targetTemperatureCommandTopic: chance.string({alpha: true}),
-            targetTemperatureStateTopic: chance.string({alpha: true}),
+            actualTemperatureStateTopic: chance.word(),
+            name: chance.word(),
+            targetTemperatureCommandTopic: chance.word(),
+            targetTemperatureStateTopic: chance.word(),
             vents: [vent],
         };
         const thermostat = {
-            actualTemperatureStateTopic: chance.string({alpha: true}),
-            name: chance.string(),
-            targetTemperatureCommandTopic: chance.string({alpha: true}),
-            targetTemperatureStateTopic: chance.string({alpha: true}),
+            actualTemperatureStateTopic: chance.word(),
+            name: chance.word(),
+            targetTemperatureCommandTopic: chance.word(),
+            targetTemperatureStateTopic: chance.word(),
         };
 
         await start({
