@@ -44,13 +44,17 @@ describe('index', () => {
     });
 
     it('should', async (done: () => void) => {
-        const expectedTopic = 'vent/living_room_east';
+        const currentRoomTemperature = 71;
+        const targetRoomTemperature = 72;
+        const expectedTopic = `vent/living_room_east`;
         const expectedMessage = 'open';
         const options = {
             config: {
                 rooms: [
                     {
                         name: 'Living Room',
+                        target_command_topic: '',
+                        temperature_state_topic: '',
                         vents: [
                             {
                                 closeMessage: 'close',

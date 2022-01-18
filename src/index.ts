@@ -22,13 +22,13 @@ export const start = async (
 
     client = connect(`tcp://${host}:${port}`, {username, password});
 
-    const promises = options.config.rooms.map((room) => {
-        return room.vents.map(() => {
-            client.subscribe()
-        });
-    });
-
-    await Promise.all(promises);
+    // const promises = options.config.rooms.map((room) => {
+    //     return room.vents.map(() => {
+    //         client.subscribe()
+    //     });
+    // });
+    //
+    // await Promise.all(promises);
 
     if (log) {
         setupLogging(client);
