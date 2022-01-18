@@ -76,6 +76,12 @@ describe('index', () => {
             mqtt,
         });
 
+        client.on('message', (topic: string, message: string) => {
+            //should get a message that thermostat.targetTemperatureStateTopic became '73'
+            //should get a message that vent.commandTopic become 'open'
+            console.log('topic: ', topic, ' message: ', message);
+            done();
+        });
         await client.publish(thermostat.actualTemperatureStateTopic, '72');
         await client.publish(thermostat.targetTemperatureStateTopic, '72');
         await client.publish(room.actualTemperatureStateTopic, '72');
