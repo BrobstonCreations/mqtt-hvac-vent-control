@@ -77,7 +77,7 @@ describe('index', () => {
         expectedTopic,
         expectedPayload,
     }) => {
-        it('should', async (done: () => void) => {
+        it('should open vent if room is too cold', async (done: () => void) => {
             await client.subscribe(expectedTopic);
 
             await start({
