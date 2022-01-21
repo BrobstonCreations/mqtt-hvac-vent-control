@@ -81,7 +81,7 @@ describe('index', () => {
             await client.subscribe(expectedTopic);
 
             await start({
-                configuration: {
+                house: {
                     rooms: [room],
                     thermostat,
                 },

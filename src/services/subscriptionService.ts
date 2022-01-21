@@ -1,6 +1,6 @@
 import {AsyncMqttClient} from 'async-mqtt';
 
-import Configuration from '../types/Configuration';
+import House from '../types/House';
 import Room from '../types/Room';
 import Vent from '../types/Vent';
 
@@ -12,7 +12,7 @@ export const subscribeToAllTopics = async (
            targetTemperatureStateTopic,
        },
        rooms,
-    }: Configuration,
+    }: House,
     client: AsyncMqttClient,
 ): Promise<void> => {
     const roomTopics = rooms.reduce((roomAccumulator: string[], room: Room) => {

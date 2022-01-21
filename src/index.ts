@@ -14,7 +14,7 @@ export const start = async (
     options: Options = getOptionsFromEnvironmentOrFile(),
 ): Promise<void> => {
     const {
-        configuration,
+        house,
         log,
         mqtt: {
             host,
@@ -26,10 +26,10 @@ export const start = async (
 
     client = connect(`tcp://${host}:${port}`, {username, password});
 
-    await subscribeToAllTopics(configuration, client);
+    await subscribeToAllTopics(house, client);
 
-    await client.publish(configuration.thermostat.targetTemperatureCommandTopic, '73');
-    await client.publish(configuration.rooms[0].vents[0].commandTopic, 'open');
+    await client.publish(house.thermostat.targetTemperatureCommandTopic, '73');
+    await client.publish(house.rooms[0].vents[0].commandTopic, 'open');
 
     if (log) {
         setupLogging(client);
