@@ -41,49 +41,63 @@ describe('index', () => {
         done();
     });
 
-    it('should', async (done: () => void) => {
-        const vent = {
-            closePayload: chance.word(),
-            closedState: chance.word(),
-            commandTopic: chance.word(),
-            name: chance.word(),
-            openPayload: chance.word(),
-            openedState: chance.word(),
-            stateTopic: chance.word(),
-        };
-        const room = {
-            actualTemperatureStateTopic: chance.word(),
-            name: chance.word(),
-            targetTemperatureCommandTopic: chance.word(),
-            targetTemperatureStateTopic: chance.word(),
-            vents: [vent],
-        };
-        const thermostat = {
-            actualTemperatureStateTopic: chance.word(),
-            name: chance.word(),
-            targetTemperatureCommandTopic: chance.word(),
-            targetTemperatureStateTopic: chance.word(),
-        };
+    const vent = {
+        closePayload: chance.word(),
+        closedState: chance.word(),
+        commandTopic: chance.word(),
+        name: chance.word(),
+        openPayload: chance.word(),
+        openedState: chance.word(),
+        stateTopic: chance.word(),
+    };
+    const room = {
+        actualTemperatureStateTopic: chance.word(),
+        name: chance.word(),
+        targetTemperatureCommandTopic: chance.word(),
+        targetTemperatureStateTopic: chance.word(),
+        vents: [vent],
+    };
+    const thermostat = {
+        actualTemperatureStateTopic: chance.word(),
+        name: chance.word(),
+        targetTemperatureCommandTopic: chance.word(),
+        targetTemperatureStateTopic: chance.word(),
+    };
 
-        await start({
-            configuration: {
-                rooms: [room],
-                thermostat,
-            },
-            log: false,
-            mqtt,
+    [
+        {
+            expectedPayload: '73',
+            expectedTopic: thermostat.targetTemperatureCommandTopic,
+        },
+        {
+            expectedPayload: 'open',
+            expectedTopic: vent.commandTopic,
+        },
+    ].forEach(({
+        expectedTopic,
+        expectedPayload,
+    }) => {
+        it('should', async (done: () => void) => {
+            await client.subscribe(expectedTopic);
+
+            await start({
+                configuration: {
+                    rooms: [room],
+                    thermostat,
+                },
+                log: false,
+                mqtt,
+            });
+
+            client.on('message', (topic: string, payload: string) => {
+                expect(topic).toBe(expectedTopic);
+                expect(payload.toString()).toBe(expectedPayload);
+                done();
+            });
+            await client.publish(thermostat.actualTemperatureStateTopic, '72');
+            await client.publish(thermostat.targetTemperatureStateTopic, '72');
+            await client.publish(room.actualTemperatureStateTopic, '72');
+            await client.publish(room.targetTemperatureCommandTopic, '73');
         });
-
-        // client.on('message', (topic: string, message: string) => {
-        //     //should get a message that thermostat.targetTemperatureCommandTopic became '73'
-        //     //should get a message that vent.commandTopic become 'open'
-        //     console.log('topic: ', topic, ' message: ', message);
-        //     done();
-        // });
-        await client.publish(thermostat.actualTemperatureStateTopic, '72');
-        await client.publish(thermostat.targetTemperatureStateTopic, '72');
-        await client.publish(room.actualTemperatureStateTopic, '72');
-        await client.publish(room.targetTemperatureCommandTopic, '73');
-        done();
     });
 });
