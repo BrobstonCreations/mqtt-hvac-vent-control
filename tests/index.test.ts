@@ -63,6 +63,10 @@ describe('index', () => {
         targetTemperatureCommandTopic: chance.word(),
         targetTemperatureStateTopic: chance.word(),
     };
+    const house = {
+        rooms: [room],
+        thermostat,
+    };
 
     [
         {
@@ -81,10 +85,7 @@ describe('index', () => {
             await client.subscribe(expectedTopic);
 
             await start({
-                house: {
-                    rooms: [room],
-                    thermostat,
-                },
+                house,
                 log: false,
                 mqtt,
             });
