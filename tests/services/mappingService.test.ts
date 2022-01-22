@@ -34,7 +34,7 @@ describe('mappingService', () => {
             [house.thermostat.targetTemperatureStateTopic]: 'house.thermostat.targetTemperature',
             [room.actualTemperatureStateTopic]: `house.rooms.${room.name}.actualTemperature`,
             [room.targetTemperatureStateTopic]: `house.rooms.${room.name}.targetTemperature`,
-            // [vent.positionStateTopic]: `house.rooms.${room.name}.vents.${vent.name}.position`,
+            [vent.positionStateTopic]: `house.rooms.${room.name}.vents.${vent.name}.position`,
         });
     });
 });

@@ -15,10 +15,29 @@ export const createMappingObject = (house: Mqtt.House): any => {
             }
             return roomAccumulator;
         }, {});
+        const ventsMapping = room.vents.reduce((ventsAccumulator: Mapping, vent: Mqtt.Vent) => {
+            const ventMapping = Object.keys(vent).reduce((ventAccumulator: Mapping, key: string) => {
+                if (key.endsWith('StateTopic')) {
+                    const stateTopic = getKeyValue(key)(vent);
+                    const stateName = key.slice(0, key.indexOf('StateTopic'));
+                    const stateStorage = `house.rooms.${room.name}.vents.${vent.name}.${stateName}`;
+                    return {
+                        ...ventAccumulator,
+                        [stateTopic]: stateStorage,
+                    };
+                }
+                return ventAccumulator;
+            }, {});
+            return {
+                ...ventsAccumulator,
+                ...ventMapping,
+            };
+        }, {});
 
         return {
             ...roomsAccumulator,
             ...roomMapping,
+            ...ventsMapping,
         };
     }, {});
 
