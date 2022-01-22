@@ -54,30 +54,30 @@ describe('stateService', () => {
             },
         });
     });
-    //
-    // it('should update state', () => {
-    //     const state = initializeState(house);
-    //     const updatedState = updateState(thermostat.actualTemperatureStateTopic, '72', state);
-    //
-    //     expect(updatedState).toEqual({
-    //         rooms: [
-    //             {
-    //                 actualTemperature: null,
-    //                 name: room.name,
-    //                 targetTemperature: null,
-    //                 vents: [
-    //                     {
-    //                         name: vent.name,
-    //                         state: null,
-    //                     },
-    //                 ],
-    //             },
-    //         ],
-    //         thermostat: {
-    //             actualTemperature: null,
-    //             name: thermostat.name,
-    //             targetTemperature: null,
-    //         },
-    //     });
-    // });
+
+    it('should update state', () => {
+        const state = initializeState(house);
+        const updatedState = updateState(thermostat.actualTemperatureStateTopic, '72', state);
+
+        expect(updatedState).toEqual({
+            rooms: [
+                {
+                    actualTemperature: null,
+                    name: room.name,
+                    targetTemperature: null,
+                    vents: [
+                        {
+                            name: vent.name,
+                            state: null,
+                        },
+                    ],
+                },
+            ],
+            thermostat: {
+                actualTemperature: null,
+                name: thermostat.name,
+                targetTemperature: null,
+            },
+        });
+    });
 });
