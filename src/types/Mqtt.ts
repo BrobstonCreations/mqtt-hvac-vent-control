@@ -27,7 +27,7 @@ export interface Vent {
     name: string;
     openPayload: string;
     openedState: string;
-    stateTopic: string;
+    positionStateTopic: string;
 }
 export interface House {
     rooms: Room[];

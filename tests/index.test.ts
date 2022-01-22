@@ -90,9 +90,9 @@ describe('index', () => {
                 mqtt,
             });
 
-            client.on('message', (topic: string, payload: string) => {
+            client.on('message', (topic: string, payloadBuffer: Buffer) => {
                 expect(topic).toBe(expectedTopic);
-                expect(payload.toString()).toBe(expectedPayload);
+                expect(payloadBuffer.toString()).toBe(expectedPayload);
                 done();
             });
             await client.publish(thermostat.actualTemperatureStateTopic, '72');
