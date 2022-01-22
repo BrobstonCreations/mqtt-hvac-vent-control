@@ -1,10 +1,14 @@
 import {Chance} from 'chance';
 
-import {initializeState} from '../../src/services/stateService';
+import {clearState, getState, initializeState, updateState} from '../../src/services/stateService';
 
 const chance = new Chance();
 
 describe('stateService', () => {
+    afterEach(() => {
+        clearState();
+    });
+
     const vent = {
         closePayload: chance.word(),
         closedState: chance.word(),
@@ -33,9 +37,9 @@ describe('stateService', () => {
     };
 
     it('should initialize state', () => {
-        const state = initializeState(house);
+        initializeState(house);
 
-        expect(state).toEqual({
+        expect(getState()).toEqual({
             rooms: {
                 [room.name]: {
                     actualTemperature: null,
@@ -56,25 +60,23 @@ describe('stateService', () => {
     });
 
     it('should update state', () => {
-        const state = initializeState(house);
-        const updatedState = updateState(thermostat.actualTemperatureStateTopic, '72', state);
+        initializeState(house);
+        updateState(thermostat.actualTemperatureStateTopic, '72');
 
-        expect(updatedState).toEqual({
-            rooms: [
-                {
+        expect(getState()).toEqual({
+            rooms: {
+                [room.name]: {
                     actualTemperature: null,
-                    name: room.name,
                     targetTemperature: null,
-                    vents: [
-                        {
-                            name: vent.name,
-                            state: null,
+                    vents: {
+                        [vent.name]: {
+                            position: null,
                         },
-                    ],
+                    },
                 },
-            ],
+            },
             thermostat: {
-                actualTemperature: null,
+                actualTemperature: 72,
                 name: thermostat.name,
                 targetTemperature: null,
             },

@@ -1,8 +1,15 @@
+import Mapping from '../types/Mapping';
 import * as Mqtt from '../types/Mqtt';
 import * as State from '../types/State';
 
-export const initializeState = (house: Mqtt.House): State.House => {
-    return {
+import {createMappingObject} from './mappingService';
+
+let state: State.House|undefined,
+    mappingObject: Mapping;
+
+export const initializeState = (house: Mqtt.House): void => {
+    mappingObject = createMappingObject(house);
+    state = {
         rooms: house.rooms.reduce((roomsAccumulator: State.Rooms, room: Mqtt.Room) => {
             return {
                 ...roomsAccumulator,
@@ -28,6 +35,11 @@ export const initializeState = (house: Mqtt.House): State.House => {
     };
 };
 
-// export const updateState = (topic: string, payload: string, state: State.House): State.House => {
-//
-// };
+export const updateState = (topic: string, payload: string): void => {
+};
+
+export const getState = (): State.House | undefined => state;
+
+export const clearState = (): void => {
+    state = undefined;
+};
