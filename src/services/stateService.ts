@@ -36,6 +36,15 @@ export const initializeState = (house: Mqtt.House): void => {
 };
 
 export const updateState = (topic: string, payload: string): void => {
+    if (state) {
+        state = {
+            ...state,
+            thermostat: {
+                ...state.thermostat,
+                actualTemperature: 72,
+            },
+        };
+    }
 };
 
 export const getState = (): State.House | undefined => state;

@@ -15,24 +15,24 @@ export const start = async (
     const {
         house,
         log,
-        mqtt: {
+        mqttConnection: {
             host,
             password,
             port,
             username,
         },
     }: Options = options;
+    initializeState(house);
 
     client = connect(`tcp://${host}:${port}`, {username, password});
     await subscribeToAllTopics(house, client);
-    initializeState(house);
 
-    client.on('message', (topic: string, payloadBuffer: Buffer) => {
-        const payload = payloadBuffer.toString();
-        updateState(topic, payload);
-    });
-    // await client.publish(house.thermostat.targetTemperatureCommandTopic, '73');
-    // await client.publish(house.rooms[0].vents[0].commandTopic, 'open');
+    // client.on('message', (topic: string, payloadBuffer: Buffer) => {
+    //     const payload = payloadBuffer.toString();
+    //     updateState(topic, payload);
+    // });
+    await client.publish(house.thermostat.targetTemperatureCommandTopic, '73');
+    await client.publish(house.rooms[0].vents[0].commandTopic, 'open');
 
     if (log) {
         setupLogging(client);

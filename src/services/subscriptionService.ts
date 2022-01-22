@@ -1,8 +1,6 @@
 import {AsyncMqttClient} from 'async-mqtt';
 
-import House from '../types/House';
-import Room from '../types/Room';
-import Vent from '../types/Vent';
+import {House, Room, Vent} from '../types/Mqtt';
 
 export const subscribeToAllTopics = async (
     {

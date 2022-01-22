@@ -14,7 +14,7 @@ const chance = new Chance();
 
 describe('index', () => {
     const optionsFilePath = `${__dirname}/options.json`;
-    const mqtt = {
+    const mqttConnection = {
         host: 'localhost',
         password: chance.string(),
         port: 1883,
@@ -25,8 +25,8 @@ describe('index', () => {
         client: AsyncMqttClient;
 
     beforeEach(async (done: () => void) => {
-        server = await createServerAsync(mqtt);
-        const {host, username, password, port}: MqttConnection = mqtt;
+        server = await createServerAsync(mqttConnection);
+        const {host, username, password, port}: MqttConnection = mqttConnection;
         client = await connectAsync(`tcp://${host}:${port}`, {username, password});
         closeSync(openSync(optionsFilePath, 'w'));
         done();
@@ -48,7 +48,7 @@ describe('index', () => {
         name: chance.word(),
         openPayload: chance.word(),
         openedState: chance.word(),
-        stateTopic: chance.word(),
+        positionStateTopic: chance.word(),
     };
     const room = {
         actualTemperatureStateTopic: chance.word(),
@@ -87,7 +87,7 @@ describe('index', () => {
             await start({
                 house,
                 log: false,
-                mqtt,
+                mqttConnection,
             });
 
             client.on('message', (topic: string, payloadBuffer: Buffer) => {
