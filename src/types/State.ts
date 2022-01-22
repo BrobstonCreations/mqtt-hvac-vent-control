@@ -1,22 +1,28 @@
-export interface Thermostat {
-    actualTemperature: number|null;
-    name: string;
-    targetTemperature: number|null;
+export interface House {
+    rooms: Rooms;
+    thermostat: Thermostat;
+}
+
+export interface Rooms {
+    [key: string]: Room;
 }
 
 export interface Room {
     actualTemperature: number|null;
-    name: string;
     targetTemperature: number|null;
-    vents: Vent[];
+    vents: Vents;
+}
+
+export interface Vents {
+    [key: string]: Vent;
 }
 
 export interface Vent {
-    name: string;
-    state: 'opened'|'closed'|null;
+    position: number|null;
 }
 
-export interface House {
-    rooms: Room[];
-    thermostat: Thermostat;
+export interface Thermostat {
+    actualTemperature: number|null;
+    name: string;
+    targetTemperature: number|null;
 }
