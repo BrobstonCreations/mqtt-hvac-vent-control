@@ -1,8 +1,8 @@
 import House from './House';
-import Mqtt from './Mqtt';
+import MqttConnection from './Mqtt';
 
 export default interface Options {
     house: House;
     log: boolean;
-    mqtt: Mqtt;
+    mqtt: MqttConnection;
 }

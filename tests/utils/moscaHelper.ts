@@ -1,12 +1,12 @@
 import {createServer, Server} from 'aedes-server-factory';
 
-import Mqtt from '../../src/types/Mqtt';
+import MqttConnection from '../../src/types/Mqtt';
 
 export const createServerAsync = ({
     password,
     port,
     username,
-}: Mqtt): Promise<Server> => {
+}: MqttConnection): Promise<Server> => {
     return new Promise((resolve: (server: Server) => void): void  => {
         const aedes = require('aedes')();
         const server = createServer(aedes);

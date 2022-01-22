@@ -6,7 +6,7 @@ import {AsyncMqttClient, connectAsync} from 'async-mqtt';
 import {Chance} from 'chance';
 import {closeSync, openSync, unlinkSync} from 'fs';
 
-import Mqtt from '../src/types/Mqtt';
+import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
 
@@ -26,7 +26,7 @@ describe('index', () => {
 
     beforeEach(async (done: () => void) => {
         server = await createServerAsync(mqtt);
-        const {host, username, password, port}: Mqtt = mqtt;
+        const {host, username, password, port}: MqttConnection = mqtt;
         client = await connectAsync(`tcp://${host}:${port}`, {username, password});
         closeSync(openSync(optionsFilePath, 'w'));
         done();

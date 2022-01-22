@@ -1,8 +1,6 @@
 import {AsyncMqttClient, connect} from 'async-mqtt';
 
 import Options from './types/Options';
-import Room from './types/Room';
-import Vent from './types/Vent';
 
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
