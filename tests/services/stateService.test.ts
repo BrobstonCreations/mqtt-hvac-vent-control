@@ -1,14 +1,10 @@
 import {Chance} from 'chance';
 
-import {clearState, getState, initializeState, updateState} from '../../src/services/stateService';
+import {getState, initializeState, updateState} from '../../src/services/stateService';
 
 const chance = new Chance();
 
 describe('stateService', () => {
-    afterEach(() => {
-        clearState();
-    });
-
     const vent = {
         closePayload: chance.word(),
         closedState: chance.word(),
@@ -36,7 +32,7 @@ describe('stateService', () => {
         thermostat,
     };
 
-    it('should initialize state', () => {
+    it('should initialize and then update state', () => {
         initializeState(house);
 
         expect(getState()).toEqual({
@@ -57,10 +53,7 @@ describe('stateService', () => {
                 targetTemperature: null,
             },
         });
-    });
 
-    it('should update state', () => {
-        initializeState(house);
         updateState(thermostat.actualTemperatureStateTopic, '72');
 
         expect(getState()).toEqual({

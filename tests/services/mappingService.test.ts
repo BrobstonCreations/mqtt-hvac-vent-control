@@ -30,11 +30,11 @@ describe('mappingService', () => {
         const room = house.rooms[0];
         const vent = room.vents[0];
         expect(mappingObject).toEqual({
-            [house.thermostat.actualTemperatureStateTopic]: 'house.thermostat.actualTemperature',
-            [house.thermostat.targetTemperatureStateTopic]: 'house.thermostat.targetTemperature',
-            [room.actualTemperatureStateTopic]: `house.rooms.${room.name}.actualTemperature`,
-            [room.targetTemperatureStateTopic]: `house.rooms.${room.name}.targetTemperature`,
-            [vent.positionStateTopic]: `house.rooms.${room.name}.vents.${vent.name}.position`,
+            [house.thermostat.actualTemperatureStateTopic]: 'thermostat.actualTemperature',
+            [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperature',
+            [room.actualTemperatureStateTopic]: `rooms.${room.name}.actualTemperature`,
+            [room.targetTemperatureStateTopic]: `rooms.${room.name}.targetTemperature`,
+            [vent.positionStateTopic]: `rooms.${room.name}.vents.${vent.name}.position`,
         });
     });
 });

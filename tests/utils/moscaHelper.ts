@@ -1,6 +1,6 @@
 import {createServer, Server} from 'aedes-server-factory';
 
-import MqttConnection from '../../src/types/Mqtt';
+import {MqttConnection} from '../../src/types/Mqtt';
 
 export const createServerAsync = ({
     password,
