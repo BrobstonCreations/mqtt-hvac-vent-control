@@ -15,11 +15,11 @@ export const subscribeToAllTopics = async (
 ): Promise<void> => {
     const roomTopics = rooms.reduce((roomAccumulator: string[], room: Room) => {
         const ventStateTopics = room.vents.reduce((ventAccumulator: string[], {
-            commandTopic,
+            positionCommandTopic,
             positionStateTopic,
         }: Vent) => ([
             ...ventAccumulator,
-            commandTopic,
+            positionCommandTopic,
             positionStateTopic,
         ]), []);
         return [

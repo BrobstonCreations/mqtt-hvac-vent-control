@@ -23,7 +23,7 @@ export interface Room {
 export interface Vent {
     closePayload: string;
     closedState: string;
-    commandTopic: string;
+    positionCommandTopic: string;
     name: string;
     openPayload: string;
     openedState: string;

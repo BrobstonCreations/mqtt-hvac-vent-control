@@ -74,7 +74,7 @@ describe('index', () => {
             expectedTopic: thermostat.targetTemperatureCommandTopic,
         },
         {
-            expectedPayload: 'open',
+            expectedPayload: '100',
             expectedTopic: vent.commandTopic,
         },
     ].forEach(({
