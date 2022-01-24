@@ -8,10 +8,10 @@ describe('stateService', () => {
     const vent = {
         closePayload: chance.word(),
         closedState: chance.word(),
-        commandTopic: chance.word(),
         name: chance.word(),
         openPayload: chance.word(),
         openedState: chance.word(),
+        positionCommandTopic: chance.word(),
         positionStateTopic: chance.word(),
     };
     const room = {
@@ -54,24 +54,33 @@ describe('stateService', () => {
             },
         });
 
-        updateState(thermostat.actualTemperatureStateTopic, '72');
+        const roomActualTemperature = chance.natural();
+        updateState(room.actualTemperatureStateTopic, roomActualTemperature.toString());
+        const roomTargetTemperature = chance.natural();
+        updateState(room.targetTemperatureStateTopic, roomTargetTemperature.toString());
+        const ventPosition = chance.natural();
+        updateState(vent.positionStateTopic, ventPosition.toString());
+        const thermostatActualTemperature = chance.natural();
+        updateState(thermostat.actualTemperatureStateTopic, thermostatActualTemperature.toString());
+        const thermostatTargetTemperature = chance.natural();
+        updateState(thermostat.targetTemperatureStateTopic, thermostatTargetTemperature.toString());
 
         expect(getState()).toEqual({
             rooms: {
                 [room.name]: {
-                    actualTemperature: null,
-                    targetTemperature: null,
+                    actualTemperature: roomActualTemperature,
+                    targetTemperature: roomTargetTemperature,
                     vents: {
                         [vent.name]: {
-                            position: null,
+                            position: ventPosition,
                         },
                     },
                 },
             },
             thermostat: {
-                actualTemperature: 72,
+                actualTemperature: thermostatActualTemperature,
                 name: thermostat.name,
-                targetTemperature: null,
+                targetTemperature: thermostatTargetTemperature,
             },
         });
     });
