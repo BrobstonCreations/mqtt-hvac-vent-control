@@ -26,6 +26,7 @@ export const subscribeToAllTopics = async (
             ...roomAccumulator,
             ...ventStateTopics,
             room.actualTemperatureStateTopic,
+            room.targetTemperatureStateTopic,
             room.targetTemperatureCommandTopic,
         ];
     }, []);
