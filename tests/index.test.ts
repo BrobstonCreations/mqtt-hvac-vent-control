@@ -98,7 +98,7 @@ describe('index', () => {
             await client.publish(thermostat.actualTemperatureStateTopic, '72');
             await client.publish(thermostat.targetTemperatureStateTopic, '72');
             await client.publish(room.actualTemperatureStateTopic, '72');
-            await client.publish(room.targetTemperatureCommandTopic, '73');
+            await client.publish(room.targetTemperatureStateTopic, '73');
         });
     });
 });
