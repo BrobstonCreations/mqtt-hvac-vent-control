@@ -1,37 +1,27 @@
-import {House, Room, Vent} from '../types/Mqtt';
-
-export const getAllTopics = (
-    {
-       thermostat: {
-           actualTemperatureStateTopic,
-           targetTemperatureCommandTopic,
-           targetTemperatureStateTopic,
-       },
-       rooms,
-    }: House,
-): string[] => {
-    const roomTopics = rooms.reduce((roomAccumulator: string[], room: Room) => {
-        const ventStateTopics = room.vents.reduce((ventAccumulator: string[], {
-            positionCommandTopic,
-            positionStateTopic,
-        }: Vent) => ([
-            ...ventAccumulator,
-            positionCommandTopic,
-            positionStateTopic,
-        ]), []);
-        return [
-            ...roomAccumulator,
-            ...ventStateTopics,
-            room.actualTemperatureStateTopic,
-            room.targetTemperatureStateTopic,
-            room.targetTemperatureCommandTopic,
-        ];
+export const getAllTopics = (object: any): string[] => {
+    return Object.keys(object).reduce((accumulator: string[], key: string) => {
+        const value = object[key];
+        if (Array.isArray(value)) {
+            return [
+                ...accumulator,
+                ...(value.reduce((innerAccumulator: string[], innerValue: any): string[] => {
+                    return [
+                        ...innerAccumulator,
+                        ...getAllTopics(innerValue),
+                    ];
+                }, [])),
+            ];
+        } else if (!Array.isArray(value) && typeof(value) === 'object') {
+            return [
+                ...accumulator,
+                ...getAllTopics(value),
+            ];
+        } else if (typeof(value) === 'string' && key.endsWith('Topic')) {
+            return [
+                ...accumulator,
+                value,
+            ];
+        }
+        return accumulator;
     }, []);
-    const topics = [
-        ...roomTopics,
-        actualTemperatureStateTopic,
-        targetTemperatureCommandTopic,
-        targetTemperatureStateTopic,
-    ];
-    return topics;
 };
