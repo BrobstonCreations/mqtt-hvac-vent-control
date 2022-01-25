@@ -5,7 +5,7 @@ import Options from './types/Options';
 import {act} from './services/controllerService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
 import {getState, initializeState, updateState} from './services/stateService';
-import {getAllTopics} from './services/topicService';
+import {getAllTopicsFromObject} from './services/topicService';
 
 let client: AsyncMqttClient;
 
@@ -23,7 +23,7 @@ export const start = async (
         },
     }: Options = options;
     client = connect(`tcp://${host}:${port}`, {username, password});
-    await client.subscribe(getAllTopics(house));
+    await client.subscribe(getAllTopicsFromObject(house));
     initializeState(house);
     client.on('message', async (topic: string, payloadBuffer: Buffer)  => {
         const payload = payloadBuffer.toString();

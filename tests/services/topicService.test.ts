@@ -1,5 +1,5 @@
 import {Chance} from 'chance';
-import {getAllTopics} from '../../src/services/topicService';
+import {getAllTopicsFromObject} from '../../src/services/topicService';
 
 const chance = new Chance();
 
@@ -32,7 +32,7 @@ describe('topicService', () => {
     };
 
     it('should return all topics for house', () => {
-        const topics = getAllTopics(house);
+        const topics = getAllTopicsFromObject(house);
 
         expect(topics).toEqual([
             room.actualTemperatureStateTopic,
@@ -57,7 +57,7 @@ describe('topicService', () => {
             fooTopic: chance.string(),
         };
 
-        const topics = getAllTopics(object);
+        const topics = getAllTopicsFromObject(object);
 
         expect(topics).toEqual([
             object.fooBar.barFoo.fooBarTopic,

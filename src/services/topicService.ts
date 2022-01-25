@@ -1,27 +1,22 @@
-export const getAllTopics = (object: any): string[] => {
-    return Object.keys(object).reduce((accumulator: string[], key: string) => {
-        const value = object[key];
-        if (Array.isArray(value)) {
-            return [
-                ...accumulator,
-                ...(value.reduce((innerAccumulator: string[], innerValue: any): string[] => {
-                    return [
-                        ...innerAccumulator,
-                        ...getAllTopics(innerValue),
-                    ];
-                }, [])),
-            ];
-        } else if (!Array.isArray(value) && typeof(value) === 'object') {
-            return [
-                ...accumulator,
-                ...getAllTopics(value),
-            ];
-        } else if (typeof(value) === 'string' && key.endsWith('Topic')) {
-            return [
-                ...accumulator,
-                value,
-            ];
-        }
-        return accumulator;
-    }, []);
+export const getAllTopicsFromArray = (array: Array<{[key: string]: any}>): string[] =>
+    array.reduce((accumulator: string[], value: any): string[] => ([
+        ...accumulator,
+        ...getAllTopicsFromObject(value),
+    ]), []);
+
+export const getAllTopicsFromObject = (object: {[key: string]: any}): string[] =>
+    Object.keys(object).reduce((accumulator: string[], key: string) => ([
+        ...accumulator,
+        ...getAllTopics(key, object[key]),
+    ]), []);
+
+const getAllTopics = (key: string, value: any): string[] => {
+    if (Array.isArray(value)) {
+        return getAllTopicsFromArray(value);
+    } else if (!Array.isArray(value) && typeof(value) === 'object') {
+        return getAllTopicsFromObject(value);
+    } else if (typeof(value) === 'string' && key.endsWith('Topic')) {
+        return [value];
+    }
+    return [];
 };
