@@ -41,6 +41,7 @@ export const topicToMemory = (house: Mqtt.House): any => {
 
     return {
         [house.thermostat.actualTemperatureStateTopic]: 'thermostat.actualTemperatureStateTopic',
+        [house.thermostat.modeStateTopic]: 'thermostat.modeStateTopic',
         [house.thermostat.targetTemperatureCommandTopic]: 'thermostat.targetTemperatureCommandTopic',
         [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperatureStateTopic',
         ...roomsMapping,

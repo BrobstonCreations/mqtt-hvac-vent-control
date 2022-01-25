@@ -33,16 +33,17 @@ export const initializeState = (house: Mqtt.House): void => {
         }, {}),
         thermostat: {
             actualTemperature: null,
+            mode: null,
             name: house.thermostat.name,
             targetTemperature: null,
         },
     };
 };
 
-export const updateState = (topic: string, payload: string): void => {
+export const updateState = (topic: string, payload: any): void => {
     const memoryPositionWithTopicLabel = mapTopicToMemory[topic];
     const memoryPosition = memoryPositionWithTopicLabel.slice(0, memoryPositionWithTopicLabel.indexOf('StateTopic'));
-    set(state, memoryPosition, Number(payload));
+    set(state, memoryPosition, isNaN(payload) ? payload : Number(payload));
 };
 
 export const getState = (): State.House => state;

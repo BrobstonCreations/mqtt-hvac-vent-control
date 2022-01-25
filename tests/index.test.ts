@@ -60,6 +60,9 @@ describe('index', () => {
     };
     const thermostat = {
         actualTemperatureStateTopic: chance.word(),
+        coolModePayload: chance.word(),
+        heatModePayload: chance.word(),
+        modeStateTopic: chance.word(),
         name: chance.word(),
         targetTemperatureCommandTopic: chance.word(),
         targetTemperatureStateTopic: chance.word(),
@@ -96,6 +99,7 @@ describe('index', () => {
                 expect(payloadBuffer.toString()).toBe(expectedPayload);
                 done();
             });
+            await client.publish(thermostat.modeStateTopic, thermostat.heatModePayload);
             await client.publish(thermostat.actualTemperatureStateTopic, '72');
             await client.publish(thermostat.targetTemperatureStateTopic, '72');
             await client.publish(room.actualTemperatureStateTopic, '72');
