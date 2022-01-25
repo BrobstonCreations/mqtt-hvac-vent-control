@@ -18,19 +18,21 @@
     "unit": "npx jest"
   },
   "keywords": [
+    "hvac",
     "javascript",
     "mqtt",
     "broker",
     "mqtt-broker",
-    "log",
-    "log-file",
-    "file",
-    "gif",
-    "png",
     "server",
     "server-side",
     "server side",
-    "node"
+    "smart",
+    "smart-vent",
+    "smart vent",
+    "thermostat",
+    "typescript",
+    "node",
+    "vent"
   ],
   "author": "Tony Brobston",
   "license": "MIT",
