@@ -6,6 +6,7 @@ import {AsyncMqttClient, connectAsync} from 'async-mqtt';
 import {Chance} from 'chance';
 import {closeSync, openSync, unlinkSync} from 'fs';
 
+import {OPEN} from '../src/constants/Vent';
 import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
@@ -33,21 +34,21 @@ describe('index', () => {
     });
 
     afterEach(async (done: () => void) => {
-        await stop();
         unlinkSync(optionsFilePath);
         await client.end();
         server.close();
         process.env.OPTIONS = undefined;
+        await stop();
         done();
     });
 
     const vent = {
         closePayload: chance.word(),
         closedState: chance.word(),
-        commandTopic: chance.word(),
         name: chance.word(),
         openPayload: chance.word(),
         openedState: chance.word(),
+        positionCommandTopic: chance.word(),
         positionStateTopic: chance.word(),
     };
     const room = {
@@ -74,8 +75,8 @@ describe('index', () => {
             expectedTopic: thermostat.targetTemperatureCommandTopic,
         },
         {
-            expectedPayload: '100',
-            expectedTopic: vent.commandTopic,
+            expectedPayload: OPEN.toString(),
+            expectedTopic: vent.positionCommandTopic,
         },
     ].forEach(({
         expectedTopic,

@@ -1,29 +1,27 @@
 import Mapping from '../types/Mapping';
 import * as Mqtt from '../types/Mqtt';
 
-export const createMappingObject = (house: Mqtt.House): any => {
+export const topicToMemory = (house: Mqtt.House): any => {
     const roomsMapping = house.rooms.reduce((roomsAccumulator: Mapping, room: Mqtt.Room) => {
         const roomMapping = Object.keys(room).reduce((roomAccumulator: Mapping, key: string) => {
-            if (key.endsWith('StateTopic')) {
-                const stateTopic = getKeyValue(key)(room);
-                const stateName = key.slice(0, key.indexOf('StateTopic'));
-                const stateStorage = `rooms.${room.name}.${stateName}`;
+            if (key.endsWith('Topic')) {
+                const topic = getKeyValue(key)(room);
+                const stateStorage = `rooms.${room.name}.${key}`;
                 return {
                     ...roomAccumulator,
-                    [stateTopic]: stateStorage,
+                    [topic]: stateStorage,
                 };
             }
             return roomAccumulator;
         }, {});
         const ventsMapping = room.vents.reduce((ventsAccumulator: Mapping, vent: Mqtt.Vent) => {
             const ventMapping = Object.keys(vent).reduce((ventAccumulator: Mapping, key: string) => {
-                if (key.endsWith('StateTopic')) {
-                    const stateTopic = getKeyValue(key)(vent);
-                    const stateName = key.slice(0, key.indexOf('StateTopic'));
-                    const stateStorage = `rooms.${room.name}.vents.${vent.name}.${stateName}`;
+                if (key.endsWith('Topic')) {
+                    const topic = getKeyValue(key)(vent);
+                    const stateStorage = `rooms.${room.name}.vents.${vent.name}.${key}`;
                     return {
                         ...ventAccumulator,
-                        [stateTopic]: stateStorage,
+                        [topic]: stateStorage,
                     };
                 }
                 return ventAccumulator;
@@ -42,8 +40,9 @@ export const createMappingObject = (house: Mqtt.House): any => {
     }, {});
 
     return {
-        [house.thermostat.actualTemperatureStateTopic]: 'thermostat.actualTemperature',
-        [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperature',
+        [house.thermostat.actualTemperatureStateTopic]: 'thermostat.actualTemperatureStateTopic',
+        [house.thermostat.targetTemperatureCommandTopic]: 'thermostat.targetTemperatureCommandTopic',
+        [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperatureStateTopic',
         ...roomsMapping,
     };
 };

@@ -2,9 +2,10 @@ import {AsyncMqttClient, connect} from 'async-mqtt';
 
 import Options from './types/Options';
 
+import {act} from './services/controllerService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
-import {initializeState, updateState} from './services/stateService';
-import {subscribeToAllTopics} from './services/subscriptionService';
+import {getState, initializeState, updateState} from './services/stateService';
+import {getAllTopics} from './services/topicService';
 
 let client: AsyncMqttClient;
 
@@ -21,16 +22,14 @@ export const start = async (
             username,
         },
     }: Options = options;
-    initializeState(house);
-
     client = connect(`tcp://${host}:${port}`, {username, password});
-    await subscribeToAllTopics(house, client);
-
-    client.on('message', (topic: string, payloadBuffer: Buffer) => {
+    await client.subscribe(getAllTopics(house));
+    initializeState(house);
+    client.on('message', async (topic: string, payloadBuffer: Buffer)  => {
         const payload = payloadBuffer.toString();
         updateState(topic, payload);
+        act(getState(), client);
     });
-
 };
 
 export const stop = async (): Promise<void> => {

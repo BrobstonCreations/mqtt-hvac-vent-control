@@ -1,16 +1,18 @@
-import {set} from 'lodash';
+import {invert, set} from 'lodash';
 
 import Mapping from '../types/Mapping';
 import * as Mqtt from '../types/Mqtt';
 import * as State from '../types/State';
 
-import {createMappingObject} from './mappingService';
+import {topicToMemory} from './mappingService';
 
 let state: State.House,
-    mappingObject: Mapping;
+    mapTopicToMemory: Mapping,
+    mapMemoryToTopic: Mapping;
 
 export const initializeState = (house: Mqtt.House): void => {
-    mappingObject = createMappingObject(house);
+    mapTopicToMemory = topicToMemory(house);
+    mapMemoryToTopic = invert(mapTopicToMemory);
     state = {
         rooms: house.rooms.reduce((roomsAccumulator: State.Rooms, room: Mqtt.Room) => {
             return {
@@ -38,7 +40,11 @@ export const initializeState = (house: Mqtt.House): void => {
 };
 
 export const updateState = (topic: string, payload: string): void => {
-    set(state, mappingObject[topic], Number(payload));
+    const memoryPositionWithTopicLabel = mapTopicToMemory[topic];
+    const memoryPosition = memoryPositionWithTopicLabel.slice(0, memoryPositionWithTopicLabel.indexOf('StateTopic'));
+    set(state, memoryPosition, Number(payload));
 };
 
-export const getState = (): State.House | undefined => state;
+export const getState = (): State.House => state;
+
+export const getMapMemoryToTopic = (): Mapping => mapMemoryToTopic;
