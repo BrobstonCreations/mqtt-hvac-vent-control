@@ -4,7 +4,7 @@ import * as Mqtt from '../types/Mqtt';
 export const topicToMemory = (house: Mqtt.House): any => {
     const roomsMapping = house.rooms.reduce((roomsAccumulator: Mapping, room: Mqtt.Room) => {
         const roomMapping = Object.keys(room).reduce((roomAccumulator: Mapping, key: string) => {
-            if (key.endsWith('Topic')) {
+            if (key.includes('Topic') || key.includes('Payload')) {
                 const topic = getKeyValue(key)(room);
                 const stateStorage = `rooms.${room.name}.${key}`;
                 return {
@@ -16,7 +16,7 @@ export const topicToMemory = (house: Mqtt.House): any => {
         }, {});
         const ventsMapping = room.vents.reduce((ventsAccumulator: Mapping, vent: Mqtt.Vent) => {
             const ventMapping = Object.keys(vent).reduce((ventAccumulator: Mapping, key: string) => {
-                if (key.endsWith('Topic')) {
+                if (key.includes('Topic') || key.includes('Payload')) {
                     const topic = getKeyValue(key)(vent);
                     const stateStorage = `rooms.${room.name}.vents.${vent.name}.${key}`;
                     return {
@@ -41,6 +41,8 @@ export const topicToMemory = (house: Mqtt.House): any => {
 
     return {
         [house.thermostat.actualTemperatureStateTopic]: 'thermostat.actualTemperatureStateTopic',
+        [house.thermostat.coolModePayload]: 'thermostat.coolModePayload',
+        [house.thermostat.heatModePayload]: 'thermostat.heatModePayload',
         [house.thermostat.modeStateTopic]: 'thermostat.modeStateTopic',
         [house.thermostat.targetTemperatureCommandTopic]: 'thermostat.targetTemperatureCommandTopic',
         [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperatureStateTopic',

@@ -1,6 +1,5 @@
 import {AsyncMqttClient} from 'async-mqtt';
 
-import {CLOSE, OPEN} from '../constants/Vent';
 import * as State from '../types/State';
 import {getMapMemoryToTopic} from './stateService';
 
@@ -10,15 +9,26 @@ export const act = ({thermostat, rooms}: State.House, client: AsyncMqttClient): 
         const room = rooms[roomName];
         Object.keys(room.vents).forEach((ventName: string) => {
             if (room.actualTemperature && room.targetTemperature) {
-                const ventPositionCommandTopic = mapMemoryToTopic[`rooms.${roomName}.vents.${ventName}.positionCommandTopic`];
-                const ventPositionPayload = room.actualTemperature < room.targetTemperature ? OPEN : CLOSE;
-                client.publish(ventPositionCommandTopic, ventPositionPayload.toString());
+                const vent = `rooms.${roomName}.vents.${ventName}`;
+                const ventPositionCommandTopic = mapMemoryToTopic[`${vent}.positionCommandTopic`];
+                const openPositionPayload = mapMemoryToTopic[`${vent}.openPositionPayload`];
+                const closePositionPayload = mapMemoryToTopic[`${vent}.closePositionPayload`];
+                const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
+                    openPositionPayload : closePositionPayload;
+                client.publish(ventPositionCommandTopic, ventPositionPayload);
                 const thermostatTargetTemperatureCommandTopic = mapMemoryToTopic['thermostat.targetTemperatureCommandTopic'];
                 if (thermostat.actualTemperature
                     && thermostat.targetTemperature
                     && thermostat.actualTemperature === thermostat.targetTemperature) {
-                    const message = thermostat.actualTemperature + 1;
-                    client.publish(thermostatTargetTemperatureCommandTopic, message.toString());
+                    const coolModePayload = mapMemoryToTopic[`thermostat.coolModePayload`];
+                    const heatModePayload = mapMemoryToTopic[`thermostat.heatModePayload`];
+                    if (thermostat.mode === coolModePayload) {
+                        const message = thermostat.actualTemperature - 1;
+                        client.publish(thermostatTargetTemperatureCommandTopic, message.toString());
+                    } else if (thermostat.mode === heatModePayload) {
+                        const message = thermostat.actualTemperature + 1;
+                        client.publish(thermostatTargetTemperatureCommandTopic, message.toString());
+                    }
                 }
             }
         });

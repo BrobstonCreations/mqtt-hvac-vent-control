@@ -7,6 +7,8 @@ export interface MqttConnection {
 
 export interface Thermostat {
     actualTemperatureStateTopic: string;
+    coolModePayload: string;
+    heatModePayload: string;
     modeStateTopic: string;
     name: string;
     targetTemperatureCommandTopic: string;
@@ -22,12 +24,12 @@ export interface Room {
 }
 
 export interface Vent {
-    closePayload: string;
-    closedState: string;
+    closePositionPayload: string;
+    closedStatePayload: string;
     positionCommandTopic: string;
     name: string;
-    openPayload: string;
-    openedState: string;
+    openPositionPayload: string;
+    openedStatePayload: string;
     positionStateTopic: string;
 }
 

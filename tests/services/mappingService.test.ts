@@ -15,13 +15,20 @@ describe('mappingService', () => {
                 targetTemperatureCommandTopic: chance.word(),
                 targetTemperatureStateTopic: chance.word(),
                 vents: [{
+                    closePositionPayload: chance.word(),
+                    closedStatePayload: chance.word(),
                     name: chance.word(),
+                    openPositionPayload: chance.word(),
+                    openedStatePayload: chance.word(),
                     positionCommandTopic: chance.word(),
                     positionStateTopic: chance.word(),
                 }],
             }],
             thermostat: {
                 actualTemperatureStateTopic: chance.word(),
+                coolModePayload: chance.word(),
+                heatModePayload: chance.word(),
+                modeStateTopic: chance.word(),
                 name: chance.string(),
                 targetTemperatureCommandTopic: chance.word(),
                 targetTemperatureStateTopic: chance.word(),
@@ -34,12 +41,19 @@ describe('mappingService', () => {
         const vent = room.vents[0];
         expect(mappingObject).toEqual({
             [house.thermostat.actualTemperatureStateTopic]: 'thermostat.actualTemperatureStateTopic',
+            [house.thermostat.coolModePayload]: 'thermostat.coolModePayload',
+            [house.thermostat.heatModePayload]: 'thermostat.heatModePayload',
+            [house.thermostat.modeStateTopic]: 'thermostat.modeStateTopic',
             [house.thermostat.targetTemperatureCommandTopic]: 'thermostat.targetTemperatureCommandTopic',
             [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperatureStateTopic',
             [room.actualTemperatureStateTopic]: `rooms.${room.name}.actualTemperatureStateTopic`,
             [room.targetTemperatureCommandTopic]: `rooms.${room.name}.targetTemperatureCommandTopic`,
             [room.targetTemperatureStateTopic]: `rooms.${room.name}.targetTemperatureStateTopic`,
+            [vent.closePositionPayload]: `rooms.${room.name}.vents.${vent.name}.closePositionPayload`,
+            [vent.closedStatePayload]: `rooms.${room.name}.vents.${vent.name}.closedStatePayload`,
             [vent.positionCommandTopic]: `rooms.${room.name}.vents.${vent.name}.positionCommandTopic`,
+            [vent.openPositionPayload]: `rooms.${room.name}.vents.${vent.name}.openPositionPayload`,
+            [vent.openedStatePayload]: `rooms.${room.name}.vents.${vent.name}.openedStatePayload`,
             [vent.positionStateTopic]: `rooms.${room.name}.vents.${vent.name}.positionStateTopic`,
         });
     });
