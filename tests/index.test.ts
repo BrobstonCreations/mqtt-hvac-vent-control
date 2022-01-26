@@ -10,7 +10,6 @@ import {OPEN} from '../src/constants/Vent';
 import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
-import exp = require("constants");
 
 const chance = new Chance();
 

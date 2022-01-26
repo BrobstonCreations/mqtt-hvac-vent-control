@@ -13,8 +13,13 @@ export const act = ({thermostat, rooms}: State.House, client: AsyncMqttClient): 
                 const ventPositionCommandTopic = mapMemoryToTopic[`rooms.${roomName}.vents.${ventName}.positionCommandTopic`];
                 const ventPositionPayload = room.actualTemperature < room.targetTemperature ? OPEN : CLOSE;
                 client.publish(ventPositionCommandTopic, ventPositionPayload.toString());
-                const thermostatTargetTemperatureCommandTopic = mapMemoryToTopic['thermostat.targetTemperatureCommandTopic']
-                client.publish(thermostatTargetTemperatureCommandTopic, '73');
+                const thermostatTargetTemperatureCommandTopic = mapMemoryToTopic['thermostat.targetTemperatureCommandTopic'];
+                if (thermostat.actualTemperature
+                    && thermostat.targetTemperature
+                    && thermostat.actualTemperature === thermostat.targetTemperature) {
+                    const message = thermostat.actualTemperature + 1;
+                    client.publish(thermostatTargetTemperatureCommandTopic, message.toString());
+                }
             }
         });
     });
