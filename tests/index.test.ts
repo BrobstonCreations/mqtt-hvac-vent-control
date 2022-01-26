@@ -10,6 +10,7 @@ import {OPEN} from '../src/constants/Vent';
 import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
+import exp = require("constants");
 
 const chance = new Chance();
 
@@ -21,27 +22,6 @@ describe('index', () => {
         port: 1883,
         username: chance.string(),
     };
-
-    let server: Server,
-        client: AsyncMqttClient;
-
-    beforeEach(async (done: () => void) => {
-        server = await createServerAsync(mqttConnection);
-        const {host, username, password, port}: MqttConnection = mqttConnection;
-        client = await connectAsync(`tcp://${host}:${port}`, {username, password});
-        closeSync(openSync(optionsFilePath, 'w'));
-        done();
-    });
-
-    afterEach(async (done: () => void) => {
-        unlinkSync(optionsFilePath);
-        await client.end();
-        server.close();
-        process.env.OPTIONS = undefined;
-        await stop();
-        done();
-    });
-
     const vent = {
         closePayload: chance.word(),
         closedState: chance.word(),
@@ -72,21 +52,38 @@ describe('index', () => {
         thermostat,
     };
 
+    let server: Server,
+        client: AsyncMqttClient;
+
+    beforeEach(async (done: () => void) => {
+        server = await createServerAsync(mqttConnection);
+        const {host, username, password, port}: MqttConnection = mqttConnection;
+        client = await connectAsync(`tcp://${host}:${port}`, {username, password});
+        closeSync(openSync(optionsFilePath, 'w'));
+        done();
+    });
+
+    afterEach(async (done: () => void) => {
+        unlinkSync(optionsFilePath);
+        await client.end();
+        server.close();
+        process.env.OPTIONS = undefined;
+        await stop();
+        done();
+    });
+
     [
         {
-            expectedPayload: '73',
-            expectedTopic: thermostat.targetTemperatureCommandTopic,
+            payload: '73',
+            topic: thermostat.targetTemperatureCommandTopic,
         },
         {
-            expectedPayload: OPEN.toString(),
-            expectedTopic: vent.positionCommandTopic,
+            payload: OPEN.toString(),
+            topic: vent.positionCommandTopic,
         },
-    ].forEach(({
-        expectedTopic,
-        expectedPayload,
-    }) => {
+    ].forEach((expected: {payload: string, topic: string}) => {
         it('should open vent if room is too cold', async (done: () => void) => {
-            await client.subscribe(expectedTopic);
+            await client.subscribe(expected.topic);
 
             await start({
                 house,
@@ -95,8 +92,8 @@ describe('index', () => {
             });
 
             client.on('message', (topic: string, payloadBuffer: Buffer) => {
-                expect(topic).toBe(expectedTopic);
-                expect(payloadBuffer.toString()).toBe(expectedPayload);
+                expect(topic).toBe(expected.topic);
+                expect(payloadBuffer.toString()).toBe(expected.payload);
                 done();
             });
             await client.publish(thermostat.modeStateTopic, thermostat.heatModePayload);
