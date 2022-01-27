@@ -1,7 +1,5 @@
 import {Server} from 'aedes-server-factory';
 
-import {createServerAsync} from './utils/aedesHelper';
-
 import {AsyncMqttClient, connectAsync} from 'async-mqtt';
 import {Chance} from 'chance';
 import {closeSync, openSync, unlinkSync} from 'fs';
@@ -9,7 +7,7 @@ import {closeSync, openSync, unlinkSync} from 'fs';
 import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
-import {message} from './utils/asyncHelper';
+import {createServerAsync, onMessageAsync} from './utils/asyncHelper';
 
 const chance = new Chance();
 
@@ -130,7 +128,7 @@ describe('index', () => {
         await client.publish(thermostat.modeStateTopic, thermostatMode);
         await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
         await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
-        const expectedMessage = await message(client);
+        const expectedMessage = await onMessageAsync(client);
         expect({
             payload: expectedVentPositionPayload,
             topic: vent.positionCommandTopic,
