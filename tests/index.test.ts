@@ -86,20 +86,26 @@ describe('index', () => {
         {
             expectedVentPositionPayload: vent.closePositionPayload,
             name: 'should close vent if thermostat is in heat mode and actual room temperature is greater than target room temperature',
-            targetRoomTemperatureDifference: 1,
+            targetRoomTemperatureDifference: -1,
             thermostatMode: thermostat.heatModePayload,
         },
         {
             expectedVentPositionPayload: vent.closePositionPayload,
             name: 'should close vent if thermostat is in cool mode and actual room temperature is less than target room temperature',
-            targetRoomTemperatureDifference: -1,
+            targetRoomTemperatureDifference: 1,
             thermostatMode: thermostat.coolModePayload,
         },
         {
             expectedVentPositionPayload: vent.closePositionPayload,
-            name: 'should close vent if actual room temperature is equal to target room temperature',
+            name: 'should close vent if thermostat is in heat mode and actual room temperature is equal to target room temperature',
             targetRoomTemperatureDifference: 0,
-            thermostatMode: null,
+            thermostatMode: thermostat.heatModePayload,
+        },
+        {
+            expectedVentPositionPayload: vent.closePositionPayload,
+            name: 'should close vent if thermostat is in cool mode and actual room temperature is equal to target room temperature',
+            targetRoomTemperatureDifference: 0,
+            thermostatMode: thermostat.coolModePayload,
         },
     ])('$name', async ({
         expectedVentPositionPayload,
