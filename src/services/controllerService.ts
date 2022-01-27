@@ -5,6 +5,8 @@ import {getMapMemoryToTopic} from './stateService';
 
 export const act = ({thermostat, rooms}: State.House, client: AsyncMqttClient): void => {
     const mapMemoryToTopic = getMapMemoryToTopic();
+    const thermostatCoolModePayload = mapMemoryToTopic['thermostat.coolModePayload'];
+    const thermostatHeatModePayload = mapMemoryToTopic['thermostat.heatModePayload'];
     Object.keys(rooms).forEach((roomName: string) => {
         const room = rooms[roomName];
         Object.keys(room.vents).forEach((ventName: string) => {
@@ -13,9 +15,15 @@ export const act = ({thermostat, rooms}: State.House, client: AsyncMqttClient): 
                 const ventPositionCommandTopic = mapMemoryToTopic[`${vent}.positionCommandTopic`];
                 const openPositionPayload = mapMemoryToTopic[`${vent}.openPositionPayload`];
                 const closePositionPayload = mapMemoryToTopic[`${vent}.closePositionPayload`];
-                const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
-                    openPositionPayload : closePositionPayload;
-                client.publish(ventPositionCommandTopic, ventPositionPayload);
+                if (thermostat.mode === thermostatHeatModePayload) {
+                    const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
+                        openPositionPayload : closePositionPayload;
+                    client.publish(ventPositionCommandTopic, ventPositionPayload);
+                } else if (thermostat.mode === thermostatCoolModePayload) {
+                    const ventPositionPayload = room.actualTemperature <= room.targetTemperature ?
+                        closePositionPayload : openPositionPayload;
+                    client.publish(ventPositionCommandTopic, ventPositionPayload);
+                }
             }
         });
     });
