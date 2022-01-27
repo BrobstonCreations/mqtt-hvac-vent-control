@@ -136,4 +136,18 @@ describe('index', () => {
             topic: vent.positionCommandTopic,
         }).toEqual(expectedMessage);
     });
+
+    it.each([
+        {
+            name: 'should begin heating if thermostat is in heat mode and at least one rooms actual room temperature is less than target room temperature ',
+        },
+    ])('$name', async ({}: any) => {
+        await client.subscribe(thermostat.targetTemperatureCommandTopic);
+
+        await start({
+            house,
+            log: false,
+            mqttConnection,
+        });
+    });
 });
