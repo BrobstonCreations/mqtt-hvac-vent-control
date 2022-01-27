@@ -73,7 +73,7 @@ describe('index', () => {
     it.each([
         {
             expectedVentPositionPayload: vent.openPositionPayload,
-            name: 'should open vent if heat mode and actual room temperature is less than target room temperature',
+            name: 'should open vent if thermostat is in heat mode and actual room temperature is less than target room temperature',
             targetRoomTemperatureDifference: 1,
             thermostatMode: thermostat.heatModePayload,
         },
