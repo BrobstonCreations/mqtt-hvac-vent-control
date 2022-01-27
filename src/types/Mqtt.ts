@@ -1,18 +1,6 @@
-export interface MqttConnection {
-    host: string;
-    port: number;
-    username?: string;
-    password?: string;
-}
-
-export interface Thermostat {
-    actualTemperatureStateTopic: string;
-    coolModePayload: string;
-    heatModePayload: string;
-    modeStateTopic: string;
-    name: string;
-    targetTemperatureCommandTopic: string;
-    targetTemperatureStateTopic: string;
+export interface House {
+    rooms: Room[];
+    thermostat: Thermostat;
 }
 
 export interface Room {
@@ -33,7 +21,19 @@ export interface Vent {
     positionStateTopic: string;
 }
 
-export interface House {
-    rooms: Room[];
-    thermostat: Thermostat;
+export interface Thermostat {
+    actualTemperatureStateTopic: string;
+    coolModePayload: string;
+    heatModePayload: string;
+    modeStateTopic: string;
+    name: string;
+    targetTemperatureCommandTopic: string;
+    targetTemperatureStateTopic: string;
+}
+
+export interface MqttConnection {
+    host: string;
+    port: number;
+    username?: string;
+    password?: string;
 }

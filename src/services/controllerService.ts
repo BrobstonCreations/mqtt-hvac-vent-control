@@ -16,20 +16,6 @@ export const act = ({thermostat, rooms}: State.House, client: AsyncMqttClient): 
                 const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
                     openPositionPayload : closePositionPayload;
                 client.publish(ventPositionCommandTopic, ventPositionPayload);
-                const thermostatTargetTemperatureCommandTopic = mapMemoryToTopic['thermostat.targetTemperatureCommandTopic'];
-                if (thermostat.actualTemperature
-                    && thermostat.targetTemperature
-                    && thermostat.actualTemperature === thermostat.targetTemperature) {
-                    const coolModePayload = mapMemoryToTopic[`thermostat.coolModePayload`];
-                    const heatModePayload = mapMemoryToTopic[`thermostat.heatModePayload`];
-                    if (thermostat.mode === coolModePayload) {
-                        const message = thermostat.actualTemperature - 1;
-                        client.publish(thermostatTargetTemperatureCommandTopic, message.toString());
-                    } else if (thermostat.mode === heatModePayload) {
-                        const message = thermostat.actualTemperature + 1;
-                        client.publish(thermostatTargetTemperatureCommandTopic, message.toString());
-                    }
-                }
             }
         });
     });

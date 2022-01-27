@@ -1,6 +1,6 @@
 import {Server} from 'aedes-server-factory';
 
-import {createServerAsync} from './utils/moscaHelper';
+import {createServerAsync} from './utils/aedesHelper';
 
 import {AsyncMqttClient, connectAsync} from 'async-mqtt';
 import {Chance} from 'chance';
@@ -9,6 +9,7 @@ import {closeSync, openSync, unlinkSync} from 'fs';
 import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
+import {message} from './utils/asyncHelper';
 
 const chance = new Chance();
 
@@ -42,6 +43,7 @@ describe('index', () => {
         heatModePayload: chance.word(),
         modeStateTopic: chance.word(),
         name: chance.word(),
+        offModePayload: chance.word(),
         targetTemperatureCommandTopic: chance.word(),
         targetTemperatureStateTopic: chance.word(),
     };
@@ -53,31 +55,46 @@ describe('index', () => {
     let server: Server,
         client: AsyncMqttClient;
 
-    beforeEach(async (done: () => void) => {
+    beforeEach(async () => {
         server = await createServerAsync(mqttConnection);
         const {host, username, password, port}: MqttConnection = mqttConnection;
         client = await connectAsync(`tcp://${host}:${port}`, {username, password});
         closeSync(openSync(optionsFilePath, 'w'));
-        done();
     });
 
-    afterEach(async (done: () => void) => {
+    afterEach(async () => {
         unlinkSync(optionsFilePath);
         await client.end();
         server.close();
         process.env.OPTIONS = undefined;
         await stop();
-        done();
     });
 
-    it('should open vent if heat mode and actual room temperature is less than target room temperature',
-        async (done: () => void) => {
+    it.each([
+        {
+            expectedVentPositionPayload: vent.openPositionPayload,
+            name: 'should open vent if heat mode and actual room temperature is less than target room temperature',
+            targetRoomTemperatureDifference: 1,
+            thermostatMode: thermostat.heatModePayload,
+        },
+        {
+            expectedVentPositionPayload: vent.openPositionPayload,
+            name: 'should open vent if thermostat is in cool mode and actual room temperature is greater than target room temperature',
+            targetRoomTemperatureDifference: -1,
+            thermostatMode: thermostat.coolModePayload,
+        },
+        {
+            expectedVentPositionPayload: vent.closePositionPayload,
+            name: 'should close vent if actual room temperature is equal to target room temperature',
+            targetRoomTemperatureDifference: 0,
+            thermostatMode: null,
+        },
+    ])('$name', async ({
+        expectedVentPositionPayload,
+        targetRoomTemperatureDifference,
+        thermostatMode,
+    }: any) => {
         await client.subscribe(vent.positionCommandTopic);
-        client.on('message', (topic: string, payloadBuffer: Buffer) => {
-            expect(topic).toBe(vent.positionCommandTopic);
-            expect(payloadBuffer.toString()).toBe(vent.openPositionPayload);
-            done();
-        });
 
         await start({
             house,
@@ -85,30 +102,16 @@ describe('index', () => {
             mqttConnection,
         });
 
-        await client.publish(thermostat.modeStateTopic, thermostat.heatModePayload);
-        const actualTemperature = chance.natural();
-        const targetTemperature = actualTemperature + 1;
-        await client.publish(room.actualTemperatureStateTopic, actualTemperature.toString());
-        await client.publish(room.targetTemperatureStateTopic, targetTemperature.toString());
+        await client.publish(thermostat.modeStateTopic, thermostatMode);
+        const actualRoomTemperature = chance.natural();
+        await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
+        const targetRoomTemperature = actualRoomTemperature + targetRoomTemperatureDifference;
+        await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
+        const {
+            topic,
+            payload,
+        } = await message(client);
+        expect(topic).toBe(vent.positionCommandTopic);
+        expect(payload).toBe(expectedVentPositionPayload);
     });
-
-    it('should close vent if actual room temperature is less than target room temperature',
-        async (done: () => void) => {
-            await client.subscribe(vent.positionCommandTopic);
-            client.on('message', (topic: string, payloadBuffer: Buffer) => {
-                expect(topic).toBe(vent.positionCommandTopic);
-                expect(payloadBuffer.toString()).toBe(vent.closePositionPayload);
-                done();
-            });
-
-            await start({
-                house,
-                log: false,
-                mqttConnection,
-            });
-
-            const temperature = chance.natural().toString();
-            await client.publish(room.actualTemperatureStateTopic, temperature);
-            await client.publish(room.targetTemperatureStateTopic, temperature);
-        });
 });
