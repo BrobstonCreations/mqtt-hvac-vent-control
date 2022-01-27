@@ -70,18 +70,36 @@ describe('index', () => {
         done();
     });
 
-    [
-        {
-            payload: '73',
-            topic: thermostat.targetTemperatureCommandTopic,
-        },
-        {
-            payload: vent.openPositionPayload,
-            topic: vent.positionCommandTopic,
-        },
-    ].forEach((expected: {payload: string, topic: string}) => {
-        it('should turn on heat and open vent if room is too cold', async (done: () => void) => {
-            await client.subscribe(expected.topic);
+    it('should open vent if heat mode and actual room temperature is less than target room temperature',
+        async (done: () => void) => {
+        await client.subscribe(vent.positionCommandTopic);
+        client.on('message', (topic: string, payloadBuffer: Buffer) => {
+            expect(topic).toBe(vent.positionCommandTopic);
+            expect(payloadBuffer.toString()).toBe(vent.openPositionPayload);
+            done();
+        });
+
+        await start({
+            house,
+            log: false,
+            mqttConnection,
+        });
+
+        await client.publish(thermostat.modeStateTopic, thermostat.heatModePayload);
+        const actualTemperature = chance.natural();
+        const targetTemperature = actualTemperature + 1;
+        await client.publish(room.actualTemperatureStateTopic, actualTemperature.toString());
+        await client.publish(room.targetTemperatureStateTopic, targetTemperature.toString());
+    });
+
+    it('should close vent if actual room temperature is less than target room temperature',
+        async (done: () => void) => {
+            await client.subscribe(vent.positionCommandTopic);
+            client.on('message', (topic: string, payloadBuffer: Buffer) => {
+                expect(topic).toBe(vent.positionCommandTopic);
+                expect(payloadBuffer.toString()).toBe(vent.closePositionPayload);
+                done();
+            });
 
             await start({
                 house,
@@ -89,48 +107,8 @@ describe('index', () => {
                 mqttConnection,
             });
 
-            client.on('message', (topic: string, payloadBuffer: Buffer) => {
-                expect(topic).toBe(expected.topic);
-                expect(payloadBuffer.toString()).toBe(expected.payload);
-                done();
-            });
-            await client.publish(thermostat.modeStateTopic, thermostat.heatModePayload);
-            await client.publish(thermostat.actualTemperatureStateTopic, '72');
-            await client.publish(thermostat.targetTemperatureStateTopic, '72');
-            await client.publish(room.actualTemperatureStateTopic, '72');
-            await client.publish(room.targetTemperatureStateTopic, '73');
+            const temperature = chance.natural().toString();
+            await client.publish(room.actualTemperatureStateTopic, temperature);
+            await client.publish(room.targetTemperatureStateTopic, temperature);
         });
-    });
-
-    [
-        {
-            payload: '72',
-            topic: thermostat.targetTemperatureCommandTopic,
-        },
-        {
-            payload: vent.closePositionPayload,
-            topic: vent.positionCommandTopic,
-        },
-    ].forEach((expected: {payload: string, topic: string}) => {
-        it('should turn off heat and close vent if room is target temperature', async (done: () => void) => {
-            await client.subscribe(expected.topic);
-
-            await start({
-                house,
-                log: false,
-                mqttConnection,
-            });
-
-            client.on('message', (topic: string, payloadBuffer: Buffer) => {
-                expect(topic).toBe(expected.topic);
-                expect(payloadBuffer.toString()).toBe(expected.payload);
-                done();
-            });
-            await client.publish(thermostat.modeStateTopic, thermostat.heatModePayload);
-            await client.publish(thermostat.actualTemperatureStateTopic, '72');
-            await client.publish(thermostat.targetTemperatureStateTopic, '73');
-            await client.publish(room.actualTemperatureStateTopic, '73');
-            await client.publish(room.targetTemperatureStateTopic, '73');
-        });
-    });
 });
