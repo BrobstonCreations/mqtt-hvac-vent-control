@@ -32,7 +32,11 @@ export const start = async (
     client.on('message', async (topic: string, payloadBuffer: Buffer)  => {
         const payload = payloadBuffer.toString();
         updateState(topic, payload);
-        act(getState(), client);
+        const state = getState();
+        if (log) {
+            console.log(state);
+        }
+        act(state, client);
     });
 };
 
