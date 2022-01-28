@@ -48,6 +48,7 @@ describe('topicService', () => {
 
     it('should return all topics for simple object', () => {
         const object = {
+            barFooTopic: chance.string(),
             fooBar: {
                 barFoo: {
                     fooBarTopic: chance.string(),
@@ -57,7 +58,7 @@ describe('topicService', () => {
             fooTopic: chance.string(),
         };
 
-        const topics = getAllTopicsFromObject(object);
+        const topics = getAllTopicsFromObject(object, ['barFooTopic']);
 
         expect(topics).toEqual([
             object.fooBar.barFoo.fooBarTopic,
