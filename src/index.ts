@@ -3,10 +3,10 @@ import {AsyncMqttClient, connect} from 'async-mqtt';
 import Options from './types/Options';
 
 import {act} from './services/controllerService';
+import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
 import {getState, initializeState, updateState} from './services/stateService';
 import {getAllTopicsFromObject} from './services/topicService';
-import {setupLogging} from './services/logService';
 
 let client: AsyncMqttClient;
 

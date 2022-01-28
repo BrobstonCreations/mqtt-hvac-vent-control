@@ -12,7 +12,6 @@ describe('mappingService', () => {
             rooms: [{
                 actualTemperatureStateTopic: chance.word(),
                 name: chance.word(),
-                targetTemperatureCommandTopic: chance.word(),
                 targetTemperatureStateTopic: chance.word(),
                 vents: [{
                     closePositionPayload: chance.word(),
@@ -47,7 +46,6 @@ describe('mappingService', () => {
             [house.thermostat.targetTemperatureCommandTopic]: 'thermostat.targetTemperatureCommandTopic',
             [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperatureStateTopic',
             [room.actualTemperatureStateTopic]: `rooms.${room.name}.actualTemperatureStateTopic`,
-            [room.targetTemperatureCommandTopic]: `rooms.${room.name}.targetTemperatureCommandTopic`,
             [room.targetTemperatureStateTopic]: `rooms.${room.name}.targetTemperatureStateTopic`,
             [vent.closePositionPayload]: `rooms.${room.name}.vents.${vent.name}.closePositionPayload`,
             [vent.closedStatePayload]: `rooms.${room.name}.vents.${vent.name}.closedStatePayload`,

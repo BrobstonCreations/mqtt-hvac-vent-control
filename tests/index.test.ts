@@ -31,7 +31,6 @@ describe('index', () => {
     const room = {
         actualTemperatureStateTopic: chance.word(),
         name: chance.word(),
-        targetTemperatureCommandTopic: chance.word(),
         targetTemperatureStateTopic: chance.word(),
         vents: [vent],
     };
