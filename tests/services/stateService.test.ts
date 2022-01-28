@@ -6,11 +6,11 @@ const chance = new Chance();
 
 describe('stateService', () => {
     const vent = {
-        closePayload: chance.word(),
-        closedState: chance.word(),
+        closePositionPayload: chance.word(),
+        closedStatePayload: chance.word(),
         name: chance.word(),
-        openPayload: chance.word(),
-        openedState: chance.word(),
+        openPositionPayload: chance.word(),
+        openedStatePayload: chance.word(),
         positionCommandTopic: chance.word(),
         positionStateTopic: chance.word(),
     };
