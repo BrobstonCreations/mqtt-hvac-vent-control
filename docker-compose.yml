@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  whole-home-hvac-control-mqtt:
+    build: .
+    ports:
+    - 1883:1883
+    volumes:
+    - .:/home
+    environment:
+      OPTIONS_FILE_PATH: '/home/options.json'
