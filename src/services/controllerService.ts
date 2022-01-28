@@ -46,11 +46,15 @@ const actThermostat = async (house: State.House, client: AsyncMqttClient): Promi
     const thermostatCoolModePayload = mapMemoryToTopic['thermostat.coolModePayload'];
     const thermostatTargetTemperatureCommandTopic = mapMemoryToTopic['thermostat.targetTemperatureCommandTopic'];
     if (turnHvacOn(house, thermostatCoolModePayload, thermostatHeatModePayload)
-        && house.thermostat.mode === thermostatHeatModePayload
         && house.thermostat.actualTemperature
         && house.thermostat.targetTemperature
         && house.thermostat.actualTemperature === house.thermostat.targetTemperature) {
-        const targetTemperature = house.thermostat.actualTemperature + 1;
-        await client.publish(thermostatTargetTemperatureCommandTopic, targetTemperature.toString());
+        if (house.thermostat.mode === thermostatHeatModePayload) {
+            const targetTemperature = house.thermostat.actualTemperature + 1;
+            await client.publish(thermostatTargetTemperatureCommandTopic, targetTemperature.toString());
+        } else if (house.thermostat.mode === thermostatCoolModePayload) {
+            const targetTemperature = house.thermostat.actualTemperature - 1;
+            await client.publish(thermostatTargetTemperatureCommandTopic, targetTemperature.toString());
+        }
     }
 };
