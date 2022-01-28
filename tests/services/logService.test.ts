@@ -7,15 +7,13 @@ global.console.log = jest.fn();
 describe('log service', () => {
     let client: AsyncMqttClient;
 
-    beforeEach(async (done: () => void) => {
+    beforeEach(() => {
         client = {} as AsyncMqttClient;
         client.on = jest.fn().mockImplementation((event: string, callback: (a: any, b: any, c: any) => void) => {
             callback('param1', 'param2', 'param3');
         });
 
         setupLogging(client);
-
-        done();
     });
 
     it('should call client on x times', () => {
