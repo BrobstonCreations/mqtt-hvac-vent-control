@@ -6,6 +6,7 @@ import {act} from './services/controllerService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
 import {getState, initializeState, updateState} from './services/stateService';
 import {getAllTopicsFromObject} from './services/topicService';
+import {setupLogging} from './services/logService';
 
 let client: AsyncMqttClient;
 
@@ -23,6 +24,9 @@ export const start = async (
         },
     }: Options = options;
     client = connect(`tcp://${host}:${port}`, {username, password});
+    if (log) {
+        setupLogging(client);
+    }
     await client.subscribe(getAllTopicsFromObject(house, ['targetTemperatureCommandTopic']));
     initializeState(house);
     client.on('message', async (topic: string, payloadBuffer: Buffer)  => {
