@@ -26,12 +26,11 @@ export const createServerAsync = ({
         });
     });
 
-export const onMessageAsync = (client: AsyncMqttClient): Promise<{ payload: string; topic: string }> =>
-    new Promise((resolve: (obj: {payload: string; topic: string}) => void) => {
-        client.on('message', (topic: string, payloadBuffer: Buffer) => {
-            resolve({
-                payload: payloadBuffer.toString(),
-                topic,
-            });
+export const onMessageAsync = (topic: string, client: AsyncMqttClient): Promise<string> =>
+    new Promise((resolve: (payload: string) => void): void => {
+        client.on('message', (actualTopic: string, payloadBuffer: Buffer) => {
+            if (topic === actualTopic) {
+                resolve(payloadBuffer.toString());
+            }
         });
     });

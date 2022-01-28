@@ -23,7 +23,7 @@ export const start = async (
         },
     }: Options = options;
     client = connect(`tcp://${host}:${port}`, {username, password});
-    await client.subscribe(getAllTopicsFromObject(house));
+    await client.subscribe(getAllTopicsFromObject(house, ['targetTemperatureCommandTopic']));
     initializeState(house);
     client.on('message', async (topic: string, payloadBuffer: Buffer)  => {
         const payload = payloadBuffer.toString();

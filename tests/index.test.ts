@@ -128,18 +128,28 @@ describe('index', () => {
         await client.publish(thermostat.modeStateTopic, thermostatMode);
         await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
         await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
-        const expectedMessage = await onMessageAsync(client);
-        expect({
-            payload: expectedVentPositionPayload,
-            topic: vent.positionCommandTopic,
-        }).toEqual(expectedMessage);
+        const actualPayload = await onMessageAsync(vent.positionCommandTopic, client);
+        expect(actualPayload).toEqual(expectedVentPositionPayload);
     });
 
     it.each([
         {
+            actualRoomTemperature: 72,
+            actualThermostatTemperature: 72,
+            expectedThermostatTemperaturePayload: 73,
             name: 'should begin heating if thermostat is in heat mode and at least one rooms actual room temperature is less than target room temperature ',
+            targetRoomTemperature: 73,
+            targetThermostatTemperature: 72,
+            thermostatMode: thermostat.heatModePayload,
         },
-    ])('$name', async ({}: any) => {
+    ])('$name', async ({
+        actualRoomTemperature,
+        actualThermostatTemperature,
+        targetRoomTemperature,
+        targetThermostatTemperature,
+        expectedThermostatTemperaturePayload,
+        thermostatMode,
+    }: any) => {
         await client.subscribe(thermostat.targetTemperatureCommandTopic);
 
         await start({
@@ -147,5 +157,13 @@ describe('index', () => {
             log: false,
             mqttConnection,
         });
+
+        await client.publish(thermostat.modeStateTopic, thermostatMode);
+        await client.publish(thermostat.actualTemperatureStateTopic, actualThermostatTemperature.toString());
+        await client.publish(thermostat.targetTemperatureStateTopic, targetThermostatTemperature.toString());
+        await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
+        await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
+        const actualPayload = await onMessageAsync(thermostat.targetTemperatureCommandTopic, client);
+        expect(actualPayload).toEqual(expectedThermostatTemperaturePayload.toString());
     });
 });
