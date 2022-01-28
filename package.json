@@ -39,6 +39,7 @@
   "dependencies": {
     "@types/lodash": "^4.14.178",
     "@types/node": "^13.5.0",
+    "@types/ws": "^8.2.2",
     "async-mqtt": "^2.4.2",
     "jsonfile": "^5.0.0",
     "lodash": "^4.17.21",
