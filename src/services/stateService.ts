@@ -32,6 +32,7 @@ export const initializeState = (house: Mqtt.House): void => {
             };
         }, {}),
         thermostat: {
+            action: null,
             actualTemperature: null,
             mode: null,
             name: house.thermostat.name,

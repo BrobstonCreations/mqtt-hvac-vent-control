@@ -21,9 +21,13 @@ export interface Vent {
 }
 
 export interface Thermostat {
+    actionStateTopic: string;
     actualTemperatureStateTopic: string;
+    coolingActionPayload: string;
     coolModePayload: string;
+    heatingActionPayload: string;
     heatModePayload: string;
+    idleActionPayload: string;
     modeStateTopic: string;
     name: string;
     targetTemperatureCommandTopic: string;

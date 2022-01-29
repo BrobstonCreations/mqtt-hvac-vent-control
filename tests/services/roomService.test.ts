@@ -1,6 +1,6 @@
 import {Chance} from 'chance';
 
-import {turnHvacOn} from '../../src/services/roomService';
+import {atLeastOneRoomNeedsHeatedOrCooled} from '../../src/services/roomService';
 
 const chance = new Chance();
 
@@ -58,6 +58,7 @@ describe('roomService', () => {
                 },
             },
             thermostat: {
+                action: null,
                 actualTemperature: null,
                 mode: thermostatMode,
                 name: chance.word(),
@@ -65,7 +66,7 @@ describe('roomService', () => {
             },
         };
 
-        const hvacOn = turnHvacOn(house, thermostatCoolModePayload, thermostatHeatModePayload);
+        const hvacOn = atLeastOneRoomNeedsHeatedOrCooled(house, thermostatCoolModePayload, thermostatHeatModePayload);
 
         expect(hvacOn).toBe(expected);
     });

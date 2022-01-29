@@ -22,6 +22,7 @@ export interface Vent {
 }
 
 export interface Thermostat {
+    action: string|null;
     actualTemperature: number|null;
     mode: string|null;
     name: string;

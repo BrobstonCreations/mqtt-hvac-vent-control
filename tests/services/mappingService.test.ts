@@ -24,9 +24,13 @@ describe('mappingService', () => {
                 }],
             }],
             thermostat: {
+                actionStateTopic: chance.word(),
                 actualTemperatureStateTopic: chance.word(),
                 coolModePayload: chance.word(),
+                coolingActionPayload: chance.word(),
                 heatModePayload: chance.word(),
+                heatingActionPayload: chance.word(),
+                idleActionPayload: chance.word(),
                 modeStateTopic: chance.word(),
                 name: chance.string(),
                 targetTemperatureCommandTopic: chance.word(),
@@ -39,9 +43,13 @@ describe('mappingService', () => {
         const room = house.rooms[0];
         const vent = room.vents[0];
         expect(mappingObject).toEqual({
+            [house.thermostat.actionStateTopic]: 'thermostat.actionStateTopic',
             [house.thermostat.actualTemperatureStateTopic]: 'thermostat.actualTemperatureStateTopic',
             [house.thermostat.coolModePayload]: 'thermostat.coolModePayload',
+            [house.thermostat.coolingActionPayload]: 'thermostat.coolingActionPayload',
             [house.thermostat.heatModePayload]: 'thermostat.heatModePayload',
+            [house.thermostat.heatingActionPayload]: 'thermostat.heatingActionPayload',
+            [house.thermostat.idleActionPayload]: 'thermostat.idleActionPayload',
             [house.thermostat.modeStateTopic]: 'thermostat.modeStateTopic',
             [house.thermostat.targetTemperatureCommandTopic]: 'thermostat.targetTemperatureCommandTopic',
             [house.thermostat.targetTemperatureStateTopic]: 'thermostat.targetTemperatureStateTopic',

@@ -35,9 +35,13 @@ describe('index', () => {
         vents: [vent],
     };
     const thermostat = {
+        actionStateTopic: chance.word(),
         actualTemperatureStateTopic: chance.word(),
         coolModePayload: chance.word(),
+        coolingActionPayload: chance.word(),
         heatModePayload: chance.word(),
+        heatingActionPayload: chance.word(),
+        idleActionPayload: chance.word(),
         modeStateTopic: chance.word(),
         name: chance.word(),
         offModePayload: chance.word(),

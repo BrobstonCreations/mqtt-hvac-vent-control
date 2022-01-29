@@ -22,9 +22,13 @@ describe('stateService', () => {
         vents: [vent],
     };
     const thermostat = {
+        actionStateTopic: chance.word(),
         actualTemperatureStateTopic: chance.word(),
         coolModePayload: chance.word(),
+        coolingActionPayload: chance.word(),
         heatModePayload: chance.word(),
+        heatingActionPayload: chance.word(),
+        idleActionPayload: chance.word(),
         modeStateTopic: chance.word(),
         name: chance.word(),
         targetTemperatureCommandTopic: chance.word(),
@@ -51,6 +55,7 @@ describe('stateService', () => {
                 },
             },
             thermostat: {
+                action: null,
                 actualTemperature: null,
                 mode: null,
                 name: thermostat.name,
@@ -64,6 +69,7 @@ describe('stateService', () => {
         updateState(room.targetTemperatureStateTopic, roomTargetTemperature.toString());
         const ventPosition = chance.natural();
         updateState(vent.positionStateTopic, ventPosition.toString());
+        updateState(thermostat.actionStateTopic, house.thermostat.heatingActionPayload);
         const thermostatActualTemperature = chance.natural();
         updateState(thermostat.actualTemperatureStateTopic, thermostatActualTemperature.toString());
         updateState(thermostat.modeStateTopic, thermostat.heatModePayload);
@@ -83,6 +89,7 @@ describe('stateService', () => {
                 },
             },
             thermostat: {
+                action: thermostat.heatingActionPayload,
                 actualTemperature: thermostatActualTemperature,
                 mode: thermostat.heatModePayload,
                 name: thermostat.name,

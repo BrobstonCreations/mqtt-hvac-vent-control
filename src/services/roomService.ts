@@ -1,6 +1,6 @@
 import * as State from '../types/State';
 
-export const turnHvacOn = (
+export const atLeastOneRoomNeedsHeatedOrCooled = (
     {thermostat, rooms}: State.House,
     thermostatCoolModePayload: string,
     thermostatHeatModePayload: string,
