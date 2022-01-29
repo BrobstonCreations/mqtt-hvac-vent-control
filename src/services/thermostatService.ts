@@ -3,7 +3,7 @@ import * as State from '../types/State';
 import {atLeastOneRoomNeedsHeatedOrCooled} from './roomService';
 import {getMapMemoryToTopic} from './stateService';
 
-export const actThermostat = async (house: State.House, client: AsyncMqttClient): Promise<void> => {
+export const adjustThermostat = async (house: State.House, client: AsyncMqttClient): Promise<void> => {
     const mapMemoryToTopic = getMapMemoryToTopic();
     const thermostatHeatModePayload = mapMemoryToTopic['thermostat.heatModePayload'];
     const thermostatCoolModePayload = mapMemoryToTopic['thermostat.coolModePayload'];

@@ -3,9 +3,9 @@ import {AsyncMqttClient, connect} from 'async-mqtt';
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
 import {getState, initializeState, updateState} from './services/stateService';
-import {actThermostat} from './services/thermostatService';
+import {adjustThermostat} from './services/thermostatService';
 import {getAllStateTopicsFromObject} from './services/topicService';
-import {actVents} from './services/ventService';
+import {adjustVents} from './services/ventService';
 import Options from './types/Options';
 
 let client: AsyncMqttClient;
@@ -37,8 +37,8 @@ export const start = async (
         if (log) {
             console.log(JSON.stringify(state, null, 2));
         }
-        await actVents(state, client);
-        await actThermostat(state, client);
+        await adjustVents(state, client);
+        await adjustThermostat(state, client);
     });
 };
 
