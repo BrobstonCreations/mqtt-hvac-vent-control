@@ -17,7 +17,9 @@ export const actThermostat = async (house: State.House, client: AsyncMqttClient)
                     thermostatCoolModePayload,
                 );
                 const targetTemperature = house.thermostat.actualTemperature + difference;
-                await client.publish(thermostatTargetTemperatureCommandTopic, targetTemperature.toString());
+                if (house.thermostat.actualTemperature !== targetTemperature) {
+                    await client.publish(thermostatTargetTemperatureCommandTopic, targetTemperature.toString());
+                }
             }
         } else {
             await client.publish(thermostatTargetTemperatureCommandTopic,
