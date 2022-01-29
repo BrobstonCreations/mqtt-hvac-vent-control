@@ -34,6 +34,9 @@ export const start = async (
         const payload = payloadBuffer.toString();
         updateState(topic, payload);
         const state = getState();
+        if (log) {
+            console.log(JSON.stringify(state, null, 2));
+        }
         await actVents(state, client);
         await actThermostat(state, client);
     });
