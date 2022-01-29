@@ -1,21 +1,21 @@
-export const getAllTopicsFromArray = (array: Array<{[key: string]: any}>, excludes: string[] = []): string[] =>
+export const getAllStateTopicsFromArray = (array: Array<{[key: string]: any}>): string[] =>
     array.reduce((accumulator: string[], value: any): string[] => ([
         ...accumulator,
-        ...getAllTopicsFromObject(value, excludes),
+        ...getAllStateTopicsFromObject(value),
     ]), []);
 
-export const getAllTopicsFromObject = (object: {[key: string]: any}, excludes: string[] = []): string[] =>
+export const getAllStateTopicsFromObject = (object: {[key: string]: any}): string[] =>
     Object.keys(object).reduce((accumulator: string[], key: string) => ([
         ...accumulator,
-        ...getAllTopics(key, object[key], excludes),
+        ...getAllStateTopics(key, object[key]),
     ]), []);
 
-const getAllTopics = (key: string, value: any, excludes: string[]): string[] => {
+const getAllStateTopics = (key: string, value: any): string[] => {
     if (Array.isArray(value)) {
-        return getAllTopicsFromArray(value, excludes);
+        return getAllStateTopicsFromArray(value);
     } else if (!Array.isArray(value) && typeof(value) === 'object') {
-        return getAllTopicsFromObject(value, excludes);
-    } else if (typeof(value) === 'string' && key.endsWith('Topic') && !excludes.includes(key)) {
+        return getAllStateTopicsFromObject(value);
+    } else if (typeof(value) === 'string' && key.endsWith('StateTopic')) {
         return [value];
     }
     return [];

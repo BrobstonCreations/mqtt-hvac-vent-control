@@ -1,5 +1,5 @@
 import {Chance} from 'chance';
-import {getAllTopicsFromObject} from '../../src/services/topicService';
+import {getAllStateTopicsFromObject} from '../../src/services/topicService';
 
 const chance = new Chance();
 
@@ -32,38 +32,35 @@ describe('topicService', () => {
     };
 
     it('should return all topics for house', () => {
-        const topics = getAllTopicsFromObject(house);
+        const topics = getAllStateTopicsFromObject(house);
 
         expect(topics).toEqual([
             room.actualTemperatureStateTopic,
-            room.targetTemperatureCommandTopic,
             room.targetTemperatureStateTopic,
-            vent.positionCommandTopic,
             vent.positionStateTopic,
             thermostat.actualTemperatureStateTopic,
-            thermostat.targetTemperatureCommandTopic,
             thermostat.targetTemperatureStateTopic,
         ]);
     });
 
     it('should return all topics for simple object', () => {
         const object = {
-            barFooTopic: chance.string(),
+            barFooCommandTopic: chance.string(),
             fooBar: {
                 barFoo: {
-                    fooBarTopic: chance.string(),
+                    fooBarStateTopic: chance.string(),
                 },
-                barTopic: chance.string(),
+                barStateTopic: chance.string(),
             },
-            fooTopic: chance.string(),
+            fooStateTopic: chance.string(),
         };
 
-        const topics = getAllTopicsFromObject(object, ['barFooTopic']);
+        const topics = getAllStateTopicsFromObject(object);
 
         expect(topics).toEqual([
-            object.fooBar.barFoo.fooBarTopic,
-            object.fooBar.barTopic,
-            object.fooTopic,
+            object.fooBar.barFoo.fooBarStateTopic,
+            object.fooBar.barStateTopic,
+            object.fooStateTopic,
         ]);
     });
 });
