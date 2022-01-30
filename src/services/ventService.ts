@@ -13,19 +13,24 @@ export const adjustVents = async ({thermostat, rooms}: State.House, client: Asyn
                 const vent = room.vents[ventName];
                 const ventMemory = `rooms.${roomName}.vents.${ventName}`;
                 const ventPositionCommandTopic = mapMemoryToTopic[`${ventMemory}.positionCommandTopic`];
+                const openPositionPayload = mapMemoryToTopic[`${ventMemory}.openPositionPayload`];
                 const openedStatePayload = mapMemoryToTopic[`${ventMemory}.openedStatePayload`];
+                const closePositionPayload = mapMemoryToTopic[`${ventMemory}.closePositionPayload`];
                 const closedStatePayload = mapMemoryToTopic[`${ventMemory}.closedStatePayload`];
                 if (thermostat.mode === thermostatHeatModePayload) {
                     const ventStatePayload = room.actualTemperature < room.targetTemperature ?
                         openedStatePayload : closedStatePayload;
                     if (!vent.position || vent.position && vent.position !== ventStatePayload) {
-                        console.log(`vent position is not set or ${vent.position} !== ${ventStatePayload}`);
-                        await client.publish(ventPositionCommandTopic, ventStatePayload);
+                        const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
+                            openPositionPayload : closePositionPayload;
+                        await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
                 } else if (thermostat.mode === thermostatCoolModePayload) {
-                    const ventPositionPayload = room.actualTemperature <= room.targetTemperature ?
+                    const ventStatePayload = room.actualTemperature < room.targetTemperature ?
                         closedStatePayload : openedStatePayload;
-                    if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
+                    if (!vent.position || vent.position && vent.position !== ventStatePayload) {
+                        const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
+                            closePositionPayload : openPositionPayload;
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
                 }
