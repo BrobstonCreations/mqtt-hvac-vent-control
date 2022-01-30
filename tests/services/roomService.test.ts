@@ -70,4 +70,27 @@ describe('roomService', () => {
 
         expect(hvacOn).toBe(expected);
     });
+
+    it('should return false because there is no room data', () => {
+        const house = {
+            rooms: {
+                [chance.word()]: {
+                    actualTemperature: null,
+                    targetTemperature: null,
+                    vents: {},
+                },
+            },
+            thermostat: {
+                action: null,
+                actualTemperature: null,
+                mode: null,
+                name: chance.word(),
+                targetTemperature: null,
+            },
+        };
+
+        const hvacOn = atLeastOneRoomNeedsHeatedOrCooled(house, thermostatCoolModePayload, thermostatHeatModePayload);
+
+        expect(hvacOn).toBe(false);
+    });
 });
