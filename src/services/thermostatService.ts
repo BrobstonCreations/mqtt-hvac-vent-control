@@ -11,6 +11,7 @@ export const adjustThermostat = async (house: State.House, client: AsyncMqttClie
     if (house.thermostat.actualTemperature) {
         if (atLeastOneRoomNeedsHeatedOrCooled(house, thermostatCoolModePayload, thermostatHeatModePayload)) {
             if (house.thermostat.action === mapMemoryToTopic['thermostat.idleActionPayload']) {
+                console.log('thermostat is idle');
                 const difference = determineDifference(
                     house.thermostat,
                     thermostatHeatModePayload,

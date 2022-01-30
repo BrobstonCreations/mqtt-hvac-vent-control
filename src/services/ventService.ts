@@ -19,6 +19,7 @@ export const adjustVents = async ({thermostat, rooms}: State.House, client: Asyn
                     const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
                         openPositionPayload : closePositionPayload;
                     if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
+                        console.log(`vent position is not set or ${vent.position} !== ${ventPositionPayload}`);
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
                 } else if (thermostat.mode === thermostatCoolModePayload) {
