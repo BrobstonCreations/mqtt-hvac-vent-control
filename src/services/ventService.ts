@@ -13,18 +13,18 @@ export const adjustVents = async ({thermostat, rooms}: State.House, client: Asyn
                 const vent = room.vents[ventName];
                 const ventMemory = `rooms.${roomName}.vents.${ventName}`;
                 const ventPositionCommandTopic = mapMemoryToTopic[`${ventMemory}.positionCommandTopic`];
-                const openedPositionPayload = mapMemoryToTopic[`${ventMemory}.openedPositionPayload`];
-                const closedPositionPayload = mapMemoryToTopic[`${ventMemory}.closedPositionPayload`];
+                const openedStatePayload = mapMemoryToTopic[`${ventMemory}.openedStatePayload`];
+                const closedStatePayload = mapMemoryToTopic[`${ventMemory}.closedStatePayload`];
                 if (thermostat.mode === thermostatHeatModePayload) {
-                    const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
-                        openedPositionPayload : closedPositionPayload;
-                    if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
-                        console.log(`vent position is not set or ${vent.position} !== ${ventPositionPayload}`);
-                        await client.publish(ventPositionCommandTopic, ventPositionPayload);
+                    const ventStatePayload = room.actualTemperature < room.targetTemperature ?
+                        openedStatePayload : closedStatePayload;
+                    if (!vent.position || vent.position && vent.position !== ventStatePayload) {
+                        console.log(`vent position is not set or ${vent.position} !== ${ventStatePayload}`);
+                        await client.publish(ventPositionCommandTopic, ventStatePayload);
                     }
                 } else if (thermostat.mode === thermostatCoolModePayload) {
                     const ventPositionPayload = room.actualTemperature <= room.targetTemperature ?
-                        closedPositionPayload : openedPositionPayload;
+                        closedStatePayload : openedStatePayload;
                     if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
