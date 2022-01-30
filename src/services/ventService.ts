@@ -18,13 +18,13 @@ export const adjustVents = async ({thermostat, rooms}: State.House, client: Asyn
                 if (thermostat.mode === thermostatHeatModePayload) {
                     const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
                         openPositionPayload : closePositionPayload;
-                    if (!vent.position || vent.position && vent.position.toString() !== ventPositionPayload) {
+                    if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
                 } else if (thermostat.mode === thermostatCoolModePayload) {
                     const ventPositionPayload = room.actualTemperature <= room.targetTemperature ?
                         closePositionPayload : openPositionPayload;
-                    if (!vent.position || vent.position && vent.position.toString() !== ventPositionPayload) {
+                    if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
                 }

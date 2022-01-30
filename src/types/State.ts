@@ -18,7 +18,7 @@ export interface Vents {
 }
 
 export interface Vent {
-    position: number|null;
+    position: string|null;
 }
 
 export interface Thermostat {
