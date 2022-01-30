@@ -13,18 +13,18 @@ export const adjustVents = async ({thermostat, rooms}: State.House, client: Asyn
                 const vent = room.vents[ventName];
                 const ventMemory = `rooms.${roomName}.vents.${ventName}`;
                 const ventPositionCommandTopic = mapMemoryToTopic[`${ventMemory}.positionCommandTopic`];
-                const openPositionPayload = mapMemoryToTopic[`${ventMemory}.openPositionPayload`];
-                const closePositionPayload = mapMemoryToTopic[`${ventMemory}.closePositionPayload`];
+                const openedPositionPayload = mapMemoryToTopic[`${ventMemory}.openedPositionPayload`];
+                const closedPositionPayload = mapMemoryToTopic[`${ventMemory}.closedPositionPayload`];
                 if (thermostat.mode === thermostatHeatModePayload) {
                     const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
-                        openPositionPayload : closePositionPayload;
+                        openedPositionPayload : closedPositionPayload;
                     if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
                         console.log(`vent position is not set or ${vent.position} !== ${ventPositionPayload}`);
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
                 } else if (thermostat.mode === thermostatCoolModePayload) {
                     const ventPositionPayload = room.actualTemperature <= room.targetTemperature ?
-                        closePositionPayload : openPositionPayload;
+                        closedPositionPayload : openedPositionPayload;
                     if (!vent.position || vent.position && vent.position !== ventPositionPayload) {
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
