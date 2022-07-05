@@ -29,7 +29,7 @@ export const adjustVents = async ({thermostat, rooms}: State.House, client: Asyn
                     const ventStatePayload = room.actualTemperature < room.targetTemperature ?
                         closedStatePayload : openedStatePayload;
                     if (!vent.position || vent.position && vent.position !== ventStatePayload) {
-                        const ventPositionPayload = room.actualTemperature < room.targetTemperature ?
+                        const ventPositionPayload = room.actualTemperature <= room.targetTemperature ?
                             closePositionPayload : openPositionPayload;
                         await client.publish(ventPositionCommandTopic, ventPositionPayload);
                     }
