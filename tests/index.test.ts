@@ -215,4 +215,14 @@ describe('index', () => {
         const actualPayload = await onMessageAsync(thermostat.targetTemperatureCommandTopic, client);
         expect(actualPayload).toEqual(expectedThermostatTemperaturePayload.toString());
     });
+
+    it('should invoke logging', async () => {
+        await start({
+            house,
+            log: true,
+            mqttConnection,
+        });
+
+        await client.publish(thermostat.modeStateTopic, thermostat.heatModePayload);
+    });
 });
