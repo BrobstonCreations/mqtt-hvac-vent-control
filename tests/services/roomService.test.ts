@@ -5,36 +5,67 @@ import {atLeastOneRoomNeedsHeatedOrCooled} from '../../src/services/roomService'
 const chance = new Chance();
 
 describe('roomService', () => {
-    const thermostatCoolModePayload = chance.word();
-    const thermostatHeatModePayload = chance.word();
+    const vent = {
+        closePositionPayload: chance.word(),
+        closedStatePayload: chance.word(),
+        name: chance.word(),
+        openPositionPayload: chance.word(),
+        openedStatePayload: chance.word(),
+        positionCommandTopic: chance.word(),
+        positionStateTopic: chance.word(),
+    };
+    const room = {
+        actualTemperatureStateTopic: chance.word(),
+        name: chance.word(),
+        targetTemperatureStateTopic: chance.word(),
+        vents: [vent],
+    };
+    const thermostat = {
+        actionStateTopic: chance.word(),
+        actualTemperatureStateTopic: chance.word(),
+        coolModePayload: chance.word(),
+        coolingActionPayload: chance.word(),
+        heatModePayload: chance.word(),
+        heatingActionPayload: chance.word(),
+        idleActionPayload: chance.word(),
+        modeStateTopic: chance.word(),
+        name: chance.word(),
+        offModePayload: chance.word(),
+        targetTemperatureCommandTopic: chance.word(),
+        targetTemperatureStateTopic: chance.word(),
+    };
+    const house = {
+        rooms: [room],
+        thermostat,
+    };
     it.each([
         {
             actualRoomTemperature: 72,
             expected: true,
             name: 'should turn on hvac if thermostat is in heat mode and actual room temperature is less than target room temperature',
             targetRoomTemperature: 73,
-            thermostatMode: thermostatHeatModePayload,
+            thermostatMode: thermostat.heatModePayload,
         },
         {
             actualRoomTemperature: 72,
             expected: true,
             name: 'should turn on hvac if thermostat is in cool mode and actual room temperature is greater than target room temperature',
             targetRoomTemperature: 71,
-            thermostatMode: thermostatCoolModePayload,
+            thermostatMode: thermostat.coolModePayload,
         },
         {
             actualRoomTemperature: 72,
             expected: false,
             name: 'should not turn on hvac if thermostat is in heat mode and actual room temperature is equal to target room temperature',
             targetRoomTemperature: 72,
-            thermostatMode: thermostatHeatModePayload,
+            thermostatMode: thermostat.heatModePayload,
         },
         {
             actualRoomTemperature: 72,
             expected: false,
             name: 'should not turn on hvac if thermostat is in cool mode and actual room temperature is equal to target room temperature',
             targetRoomTemperature: 72,
-            thermostatMode: thermostatCoolModePayload,
+            thermostatMode: thermostat.coolModePayload,
         },
         {
             actualRoomTemperature: null,
@@ -49,47 +80,21 @@ describe('roomService', () => {
         targetRoomTemperature,
         thermostatMode,
     }: any) => {
-        const house = {
-            rooms: {
-                [chance.word()]: {
-                    actualTemperature: actualRoomTemperature,
-                    targetTemperature: targetRoomTemperature,
-                    vents: {},
-                },
-            },
-            thermostat: {
-                action: null,
-                actualTemperature: null,
-                mode: thermostatMode,
-                name: chance.word(),
-                targetTemperature: null,
-            },
+        const messages = {
+            [house.thermostat.modeStateTopic]: thermostatMode,
+            [room.actualTemperatureStateTopic]: actualRoomTemperature,
+            [room.targetTemperatureStateTopic]: targetRoomTemperature,
         };
 
-        const hvacOn = atLeastOneRoomNeedsHeatedOrCooled(house, thermostatCoolModePayload, thermostatHeatModePayload);
+        const hvacOn = atLeastOneRoomNeedsHeatedOrCooled(house, messages);
 
         expect(hvacOn).toBe(expected);
     });
 
     it('should return false because there is no room data', () => {
-        const house = {
-            rooms: {
-                [chance.word()]: {
-                    actualTemperature: null,
-                    targetTemperature: null,
-                    vents: {},
-                },
-            },
-            thermostat: {
-                action: null,
-                actualTemperature: null,
-                mode: null,
-                name: chance.word(),
-                targetTemperature: null,
-            },
-        };
+        const messages = {};
 
-        const hvacOn = atLeastOneRoomNeedsHeatedOrCooled(house, thermostatCoolModePayload, thermostatHeatModePayload);
+        const hvacOn = atLeastOneRoomNeedsHeatedOrCooled(house, messages);
 
         expect(hvacOn).toBe(false);
     });

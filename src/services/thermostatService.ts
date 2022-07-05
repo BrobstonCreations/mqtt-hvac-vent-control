@@ -1,42 +1,38 @@
 import {AsyncMqttClient} from 'async-mqtt';
-import * as State from '../types/State';
+import {House, Thermostat} from '../types/Mqtt';
 import {atLeastOneRoomNeedsHeatedOrCooled} from './roomService';
-import {getMapMemoryToTopic} from './stateService';
 
-export const adjustThermostat = async (house: State.House, client: AsyncMqttClient): Promise<void> => {
-    const mapMemoryToTopic = getMapMemoryToTopic();
-    const thermostatHeatModePayload = mapMemoryToTopic['thermostat.heatModePayload'];
-    const thermostatCoolModePayload = mapMemoryToTopic['thermostat.coolModePayload'];
-    const thermostatTargetTemperatureCommandTopic = mapMemoryToTopic['thermostat.targetTemperatureCommandTopic'];
-    if (house.thermostat.actualTemperature) {
-        if (atLeastOneRoomNeedsHeatedOrCooled(house, thermostatCoolModePayload, thermostatHeatModePayload)) {
-            if (house.thermostat.action === mapMemoryToTopic['thermostat.idleActionPayload']) {
+export const adjustThermostat = async (house: House, messages: {[key: string]: string|number}, client: AsyncMqttClient):
+    Promise<void> => {
+    const {thermostat}: House = house;
+    const actualTemperature = messages[thermostat.actualTemperatureStateTopic];
+    if (actualTemperature) {
+        if (atLeastOneRoomNeedsHeatedOrCooled(house, messages)) {
+            const thermostatAction = messages[thermostat.actionStateTopic];
+            if (thermostatAction === thermostat.idleActionPayload) {
                 const difference = determineDifference(
-                    house.thermostat,
-                    thermostatHeatModePayload,
-                    thermostatCoolModePayload,
+                    thermostat,
+                    messages,
                 );
-                const targetTemperature = house.thermostat.actualTemperature + difference;
-                if (house.thermostat.actualTemperature !== targetTemperature) {
-                    await client.publish(thermostatTargetTemperatureCommandTopic, targetTemperature.toString());
+                const targetTemperature = Number(actualTemperature) + difference;
+                if (actualTemperature !== targetTemperature) {
+                    await client.publish(thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
                 }
             }
         } else {
-            await client.publish(thermostatTargetTemperatureCommandTopic,
-                house.thermostat.actualTemperature.toString());
+            await client.publish(thermostat.targetTemperatureCommandTopic, actualTemperature.toString());
         }
     }
 };
 
 const determineDifference = (
-    thermostat: State.Thermostat,
-    thermostatHeatModePayload: string,
-    thermostatCoolModePayload: string,
+    thermostat: Thermostat,
+    messages: {[key: string]: string|number},
 ): number => {
-    switch (thermostat.mode) {
-        case thermostatHeatModePayload:
+    switch (messages[thermostat.modeStateTopic]) {
+        case thermostat.heatModePayload:
             return 1;
-        case thermostatCoolModePayload:
+        case thermostat.coolModePayload:
             return -1;
         default:
             return 0;

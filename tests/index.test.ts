@@ -20,33 +20,33 @@ describe('index', () => {
         username: chance.string(),
     };
     const vent = {
-        closePositionPayload: chance.word(),
-        closedStatePayload: chance.word(),
+        closePositionPayload: 'close',
+        closedStatePayload: 'closed',
         name: chance.word(),
-        openPositionPayload: chance.word(),
-        openedStatePayload: chance.word(),
-        positionCommandTopic: chance.word(),
-        positionStateTopic: chance.word(),
+        openPositionPayload: 'open',
+        openedStatePayload: 'opened',
+        positionCommandTopic: 'cmd/room_south/vent',
+        positionStateTopic: 'stat/room_south/vent',
     };
     const room = {
-        actualTemperatureStateTopic: chance.word(),
+        actualTemperatureStateTopic: 'stat/room/actual_temperature',
         name: chance.word(),
-        targetTemperatureStateTopic: chance.word(),
+        targetTemperatureStateTopic: 'stat/room/target_temperature',
         vents: [vent],
     };
     const thermostat = {
-        actionStateTopic: chance.word(),
-        actualTemperatureStateTopic: chance.word(),
-        coolModePayload: chance.word(),
-        coolingActionPayload: chance.word(),
-        heatModePayload: chance.word(),
-        heatingActionPayload: chance.word(),
-        idleActionPayload: chance.word(),
-        modeStateTopic: chance.word(),
+        actionStateTopic: 'stat/ecobee/action',
+        actualTemperatureStateTopic: 'stat/ecobee/actual_temperature',
+        coolModePayload: 'cool',
+        coolingActionPayload: 'cooling',
+        heatModePayload: 'heat',
+        heatingActionPayload: 'heating',
+        idleActionPayload: 'idle',
+        modeStateTopic: 'stat/ecobee/mode',
         name: chance.word(),
-        offModePayload: chance.word(),
-        targetTemperatureCommandTopic: chance.word(),
-        targetTemperatureStateTopic: chance.word(),
+        offModePayload: 'off',
+        targetTemperatureCommandTopic: 'cmd/ecobee/temperature',
+        targetTemperatureStateTopic: 'stat/ecobee/target_temperature',
     };
     const house = {
         rooms: [room],
@@ -128,9 +128,9 @@ describe('index', () => {
             mqttConnection,
         });
 
-        await client.publish(thermostat.modeStateTopic, thermostatMode);
         await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
         await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
+        await client.publish(thermostat.modeStateTopic, thermostatMode);
         const actualPayload = await onMessageAsync(vent.positionCommandTopic, client);
         expect(actualPayload).toEqual(expectedVentPositionPayload);
     });

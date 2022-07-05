@@ -1,19 +1,17 @@
-import * as State from '../types/State';
+import {House, Room} from '../types/Mqtt';
 
 export const atLeastOneRoomNeedsHeatedOrCooled = (
-    {thermostat, rooms}: State.House,
-    thermostatCoolModePayload: string,
-    thermostatHeatModePayload: string,
+    {thermostat, rooms}: House,
+    messages: {[key: string]: string|number},
 ): boolean =>
-    Object.keys(rooms).some((roomName: string) => {
-        const {
-            actualTemperature,
-            targetTemperature,
-        }: State.Room = rooms[roomName];
+    rooms.some((room: Room) => {
+        const actualTemperature = messages[room.actualTemperatureStateTopic];
+        const targetTemperature = messages[room.targetTemperatureStateTopic];
+        const thermostatMode = messages[thermostat.modeStateTopic];
         return actualTemperature
             && targetTemperature
             && (
-                (thermostat.mode === thermostatHeatModePayload && actualTemperature < targetTemperature)
-                || (thermostat.mode === thermostatCoolModePayload && actualTemperature > targetTemperature)
+                (thermostatMode === thermostat.heatModePayload && actualTemperature < targetTemperature)
+                || (thermostatMode === thermostat.coolModePayload && actualTemperature > targetTemperature)
             );
     });
