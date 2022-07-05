@@ -25,7 +25,7 @@ export const adjustThermostat = async (house: House, messages: {[key: string]: s
     }
 };
 
-const determineDifference = (
+export const determineDifference = (
     thermostat: Thermostat,
     messages: {[key: string]: string|number},
 ): number => {
