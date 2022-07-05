@@ -140,7 +140,7 @@ describe('index', () => {
             actualRoomTemperature: 72,
             actualThermostatTemperature: 72,
             expectedThermostatTemperaturePayload: 73,
-            name: 'should begin heating if thermostat is in heat mode and at least one room\'s actual room temperature is less than target room temperature',
+            name: 'should begin heating if thermostat is idle, in heat mode, and at least one room\'s actual room temperature is less than target room temperature',
             targetRoomTemperature: 73,
             targetThermostatTemperature: 72,
             thermostatMode: thermostat.heatModePayload,
@@ -149,7 +149,7 @@ describe('index', () => {
             actualRoomTemperature: 72,
             actualThermostatTemperature: 72,
             expectedThermostatTemperaturePayload: 71,
-            name: 'should begin cooling if thermostat is in cool mode and at least one room\'s actual room temperature is greater than target room temperature',
+            name: 'should begin cooling if thermostat is idle, in cool mode, and at least one room\'s actual room temperature is greater than target room temperature',
             targetRoomTemperature: 71,
             targetThermostatTemperature: 72,
             thermostatMode: thermostat.coolModePayload,
@@ -158,7 +158,7 @@ describe('index', () => {
             actualRoomTemperature: 72,
             actualThermostatTemperature: 72,
             expectedThermostatTemperaturePayload: 73,
-            name: 'should continue heating if thermostat is in heat mode and at least one room\'s actual room temperature is still less than target room temperature',
+            name: 'should continue heating if thermostat is idle, in heat mode, and at least one room\'s actual room temperature is still less than target room temperature',
             targetRoomTemperature: 73,
             targetThermostatTemperature: 73,
             thermostatMode: thermostat.heatModePayload,
@@ -167,7 +167,7 @@ describe('index', () => {
             actualRoomTemperature: 72,
             actualThermostatTemperature: 72,
             expectedThermostatTemperaturePayload: 71,
-            name: 'should continue cooling if thermostat is in cool mode and at least one room\'s actual room temperature is still greater than target room temperature',
+            name: 'should continue cooling if thermostat is idle, in cool mode, and at least one room\'s actual room temperature is still greater than target room temperature',
             targetRoomTemperature: 71,
             targetThermostatTemperature: 71,
             thermostatMode: thermostat.coolModePayload,
@@ -176,7 +176,7 @@ describe('index', () => {
             actualRoomTemperature: 73,
             actualThermostatTemperature: 72,
             expectedThermostatTemperaturePayload: 72,
-            name: 'should become idle if thermostat is in heat mode and all room\'s actual room temperature is greater than target room temperature',
+            name: 'should become idle if thermostat is idle, in heat mode, and all room\'s actual room temperature is greater than target room temperature',
             targetRoomTemperature: 72,
             targetThermostatTemperature: 73,
             thermostatMode: thermostat.heatModePayload,
@@ -185,7 +185,7 @@ describe('index', () => {
             actualRoomTemperature: 71,
             actualThermostatTemperature: 72,
             expectedThermostatTemperaturePayload: 72,
-            name: 'should become idle if thermostat is in cool mode and all room\'s actual room temperature is less than target room temperature',
+            name: 'should become idle if thermostat is idle, in cool mode, and all room\'s actual room temperature is less than target room temperature',
             targetRoomTemperature: 72,
             targetThermostatTemperature: 71,
             thermostatMode: thermostat.coolModePayload,
@@ -207,6 +207,7 @@ describe('index', () => {
         });
 
         await client.publish(thermostat.modeStateTopic, thermostatMode);
+        await client.publish(thermostat.actionStateTopic, thermostat.idleActionPayload);
         await client.publish(thermostat.actualTemperatureStateTopic, actualThermostatTemperature.toString());
         await client.publish(thermostat.targetTemperatureStateTopic, targetThermostatTemperature.toString());
         await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
