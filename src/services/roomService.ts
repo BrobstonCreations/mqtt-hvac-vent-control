@@ -16,7 +16,7 @@ export const atLeastOneRoomNeedsHeatedOrCooled = (
             );
     });
 
-export const allRoomsAreAtDesiredTemperature = (house: House, messages: {[key: string]: string|number}) => {
+export const allRoomsAreAtDesiredTemperature = (house: House, messages: {[key: string]: string|number}): boolean => {
     return house.rooms.every((room: Room) => {
         const thermostatMode = messages[house.thermostat.modeStateTopic];
         const roomActualTemperature = messages[room.actualTemperatureStateTopic];
@@ -27,8 +27,6 @@ export const allRoomsAreAtDesiredTemperature = (house: House, messages: {[key: s
                 return roomActualTemperature <= roomTargetTemperature;
             case house.thermostat.heatModePayload:
                 return roomActualTemperature >= roomTargetTemperature;
-            default:
-                return false;
         }
     });
 };
