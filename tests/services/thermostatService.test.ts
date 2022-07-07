@@ -40,6 +40,13 @@ describe('thermostatService', () => {
             rooms: [room],
             thermostat,
         };
+        const client = {
+            publish: jest.fn(),
+        } as any;
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
 
         it('should decrease thermostat target temperature by 1', async () => {
             const messages = {
@@ -49,9 +56,6 @@ describe('thermostatService', () => {
                 [room.actualTemperatureStateTopic]: 72,
                 [room.targetTemperatureStateTopic]: 71,
             };
-            const client = {
-                publish: jest.fn(),
-            } as any;
 
             await adjustThermostat(house, messages, client);
 
@@ -67,9 +71,6 @@ describe('thermostatService', () => {
                 [room.actualTemperatureStateTopic]: 72,
                 [room.targetTemperatureStateTopic]: 71,
             };
-            const client = {
-                publish: jest.fn(),
-            } as any;
 
             await adjustThermostat(house, messages, client);
 
