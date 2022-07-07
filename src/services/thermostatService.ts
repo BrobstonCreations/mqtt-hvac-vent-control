@@ -1,6 +1,6 @@
 import {AsyncMqttClient} from 'async-mqtt';
 import {House, Thermostat} from '../types/Mqtt';
-import {atLeastOneRoomNeedsHeatedOrCooled} from './roomService';
+import {allRoomsAreAtDesiredTemperature, atLeastOneRoomNeedsHeatedOrCooled} from './roomService';
 
 export const adjustThermostat = async (house: House, messages: {[key: string]: string|number}, client: AsyncMqttClient):
     Promise<void> => {
@@ -8,12 +8,16 @@ export const adjustThermostat = async (house: House, messages: {[key: string]: s
     const thermostatActualTemperature = messages[thermostat.actualTemperatureStateTopic];
     if (thermostatActualTemperature) {
         const thermostatAction = messages[thermostat.actionStateTopic];
-        const desiredState =
-            atLeastOneRoomNeedsHeatedOrCooled(house, messages) && thermostatAction === thermostat.idleActionPayload ?
-                'on' : 'off';
-        const difference = determineDifference(desiredState, thermostat, messages);
-        const targetTemperature = Number(thermostatActualTemperature) + difference;
-        await client.publish(thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
+        if (atLeastOneRoomNeedsHeatedOrCooled(house, messages) && thermostatAction === thermostat.idleActionPayload) {
+            const difference = determineDifference('on', thermostat, messages);
+            const targetTemperature = Number(thermostatActualTemperature) + difference;
+            await client.publish(thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
+        } else if (allRoomsAreAtDesiredTemperature(house, messages)
+            && thermostatAction !== thermostat.idleActionPayload) {
+            const difference = determineDifference('off', thermostat, messages);
+            const targetTemperature = Number(thermostatActualTemperature) + difference;
+            await client.publish(thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
+        }
     }
 };
 

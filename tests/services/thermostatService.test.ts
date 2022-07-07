@@ -54,8 +54,8 @@ describe('thermostatService', () => {
                 [thermostat.actualTemperatureStateTopic]: 71,
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.idleActionPayload,
-                [room.actualTemperatureStateTopic]: 72,
-                [room.targetTemperatureStateTopic]: 71,
+                [room.actualTemperatureStateTopic]: 75,
+                [room.targetTemperatureStateTopic]: 74,
             };
 
             await adjustThermostat(house, messages, client);
@@ -64,13 +64,13 @@ describe('thermostatService', () => {
             expect(client.publish).toHaveBeenCalledWith(thermostat.targetTemperatureCommandTopic, '70');
         });
 
-        it('should', async () => {
+        it('should increase thermostat target temperature by 1 if all room\'s actual temperatures are at or above the target temperature', async () => {
             const messages = {
                 [thermostat.actualTemperatureStateTopic]: 72,
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.coolingActionPayload,
-                [room.actualTemperatureStateTopic]: 72,
-                [room.targetTemperatureStateTopic]: 71,
+                [room.actualTemperatureStateTopic]: 74,
+                [room.targetTemperatureStateTopic]: 75,
             };
 
             await adjustThermostat(house, messages, client);
@@ -78,7 +78,22 @@ describe('thermostatService', () => {
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(thermostat.targetTemperatureCommandTopic, '73');
         });
+
+        it('should continue cooling if at least one room\'s actual temperatures are is below target', async () => {
+            const messages = {
+                [thermostat.actualTemperatureStateTopic]: 72,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [thermostat.actionStateTopic]: thermostat.coolingActionPayload,
+                [room.actualTemperatureStateTopic]: 74,
+                [room.targetTemperatureStateTopic]: 73,
+            };
+
+            await adjustThermostat(house, messages, client);
+
+            expect(client.publish).not.toHaveBeenCalled();
+        });
     });
+
     describe('determineDifference', () => {
         it('should return 1 for turning on heating mode', () => {
             const heatModePayload = chance.string();
