@@ -79,7 +79,7 @@ describe('thermostatService', () => {
         });
     });
     describe('determineDifference', () => {
-        it('should determine difference and return 1', () => {
+        it('should return 1 for turning on heating mode', () => {
             const heatModePayload = chance.string();
             const modeStateTopic = chance.string();
             const thermostat = {
@@ -91,12 +91,29 @@ describe('thermostatService', () => {
                 [modeStateTopic]: heatModePayload,
             };
 
-            const difference = determineDifference(thermostat, messages);
+            const difference = determineDifference('on', thermostat, messages);
 
             expect(difference).toBe(1);
         });
 
-        it('should determine difference and return -1', () => {
+        it('should return -1 for turning off heating mode', () => {
+            const heatModePayload = chance.string();
+            const modeStateTopic = chance.string();
+            const thermostat = {
+                coolModePayload: chance.string(),
+                heatModePayload,
+                modeStateTopic,
+            } as Thermostat;
+            const messages = {
+                [modeStateTopic]: heatModePayload,
+            };
+
+            const difference = determineDifference('off', thermostat, messages);
+
+            expect(difference).toBe(-1);
+        });
+
+        it('should return -1 for turning on cooling mode', () => {
             const coolModePayload = chance.string();
             const modeStateTopic = chance.string();
             const thermostat = {
@@ -108,12 +125,29 @@ describe('thermostatService', () => {
                 [modeStateTopic]: coolModePayload,
             };
 
-            const difference = determineDifference(thermostat, messages);
+            const difference = determineDifference('on', thermostat, messages);
 
             expect(difference).toBe(-1);
         });
 
-        it('should determine difference and return 0', () => {
+        it('should return 1 for turning off cooling mode', () => {
+            const coolModePayload = chance.string();
+            const modeStateTopic = chance.string();
+            const thermostat = {
+                coolModePayload,
+                heatModePayload: chance.string(),
+                modeStateTopic,
+            } as Thermostat;
+            const messages = {
+                [modeStateTopic]: coolModePayload,
+            };
+
+            const difference = determineDifference('off', thermostat, messages);
+
+            expect(difference).toBe(1);
+        });
+
+        it('should return 0 for on and unintended state', () => {
             const thermostat = {
                 coolModePayload: chance.string(),
                 heatModePayload: chance.string(),
@@ -121,7 +155,20 @@ describe('thermostatService', () => {
             } as Thermostat;
             const messages = {};
 
-            const difference = determineDifference(thermostat, messages);
+            const difference = determineDifference('on', thermostat, messages);
+
+            expect(difference).toBe(0);
+        });
+
+        it('should return 0 for off and unintended state', () => {
+            const thermostat = {
+                coolModePayload: chance.string(),
+                heatModePayload: chance.string(),
+                modeStateTopic: chance.string(),
+            } as Thermostat;
+            const messages = {};
+
+            const difference = determineDifference('off', thermostat, messages);
 
             expect(difference).toBe(0);
         });

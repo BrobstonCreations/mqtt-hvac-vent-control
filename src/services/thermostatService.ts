@@ -11,6 +11,7 @@ export const adjustThermostat = async (house: House, messages: {[key: string]: s
             const thermostatAction = messages[thermostat.actionStateTopic];
             if (thermostatAction === thermostat.idleActionPayload) {
                 const difference = determineDifference(
+                    'on',
                     thermostat,
                     messages,
                 );
@@ -24,15 +25,25 @@ export const adjustThermostat = async (house: House, messages: {[key: string]: s
 };
 
 export const determineDifference = (
+    desiredState: string,
     thermostat: Thermostat,
     messages: {[key: string]: string|number},
 ): number => {
     switch (messages[thermostat.modeStateTopic]) {
         case thermostat.heatModePayload:
-            return 1;
+            switch (desiredState) {
+                case 'on':
+                    return 1;
+                case 'off':
+                    return -1;
+            }
         case thermostat.coolModePayload:
-            return -1;
-        default:
-            return 0;
+            switch (desiredState) {
+                case 'on':
+                    return -1;
+                case 'off':
+                    return 1;
+            }
     }
+    return 0;
 };
