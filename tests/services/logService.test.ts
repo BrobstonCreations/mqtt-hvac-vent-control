@@ -17,61 +17,51 @@ describe('log service', () => {
     });
 
     it('should call client on x times', () => {
-        expect(client.on).toHaveBeenCalledTimes(10);
+        expect(client.on).toHaveBeenCalledTimes(8);
     });
 
     it('should call console log x times', () => {
-        expect(global.console.log).toHaveBeenCalledTimes(20);
+        expect(global.console.log).toHaveBeenCalledTimes(16);
     });
 
     it('should call on connect', () => {
         expect(client.on).toHaveBeenCalledWith('connect', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('connected     | connack: \"param1\"');
+        expect(global.console.log).toHaveBeenCalledWith('connected    | connack: \"param1\"');
     });
 
     it('should call on reconnect', () => {
         expect(client.on).toHaveBeenCalledWith('reconnect', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('reconnected   |');
+        expect(global.console.log).toHaveBeenCalledWith('reconnected  |');
     });
 
     it('should call on disconnect', () => {
         expect(client.on).toHaveBeenCalledWith('disconnect', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('disconnected  |');
+        expect(global.console.log).toHaveBeenCalledWith('disconnected |');
     });
 
     it('should call on message', () => {
         expect(client.on).toHaveBeenCalledWith('message', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('message       | topic: param1, message: param2, packet: \"param3\"');
-    });
-
-    it('should call on packetsend', () => {
-        expect(client.on).toHaveBeenCalledWith('packetsend', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('packetsend    | packet: \"param1\"');
-    });
-
-    it('should call on packetreceive', () => {
-        expect(client.on).toHaveBeenCalledWith('packetreceive', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('packetreceive | packet: \"param1\"');
+        expect(global.console.log).toHaveBeenCalledWith('message      | topic: param1 | message: param2');
     });
 
     it('should call on error', () => {
         expect(client.on).toHaveBeenCalledWith('error', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('error         | param1');
+        expect(global.console.log).toHaveBeenCalledWith('error        | param1');
     });
 
     it('should call on offline', () => {
         expect(client.on).toHaveBeenCalledWith('offline', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('offline       |');
+        expect(global.console.log).toHaveBeenCalledWith('offline      |');
     });
 
     it('should call on close', () => {
         expect(client.on).toHaveBeenCalledWith('close', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('closed        |');
+        expect(global.console.log).toHaveBeenCalledWith('closed       |');
     });
 
     it('should call on end', () => {
         expect(client.on).toHaveBeenCalledWith('end', expect.any(Function));
-        expect(global.console.log).toHaveBeenCalledWith('ended         |');
+        expect(global.console.log).toHaveBeenCalledWith('ended        |');
 
     });
 });
