@@ -47,7 +47,7 @@ describe('ventService', () => {
             jest.clearAllMocks();
         });
 
-        it('should', async () => {
+        it('should open vent when actual temp is above target and thermostat is cool mode', async () => {
             const messages = {
                 [room.actualTemperatureStateTopic]: 71,
                 [room.targetTemperatureStateTopic]: 70,
@@ -58,6 +58,21 @@ describe('ventService', () => {
             await adjustVents(house, messages, client);
 
             expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should open vent when actual temp is below target and thermostat is heat mode', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: 70,
+                [room.targetTemperatureStateTopic]: 71,
+                [thermostat.modeStateTopic]: thermostat.heatModePayload,
+                [vent.positionStateTopic]: vent.closedStatePayload,
+            };
+
+            await adjustVents(house, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
         });
     });
 });
