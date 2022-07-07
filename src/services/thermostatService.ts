@@ -7,20 +7,13 @@ export const adjustThermostat = async (house: House, messages: {[key: string]: s
     const {thermostat}: House = house;
     const thermostatActualTemperature = messages[thermostat.actualTemperatureStateTopic];
     if (thermostatActualTemperature) {
-        if (atLeastOneRoomNeedsHeatedOrCooled(house, messages)) {
-            const thermostatAction = messages[thermostat.actionStateTopic];
-            if (thermostatAction === thermostat.idleActionPayload) {
-                const difference = determineDifference(
-                    'on',
-                    thermostat,
-                    messages,
-                );
-                const targetTemperature = Number(thermostatActualTemperature) + difference;
-                await client.publish(thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
-            }
-        } else {
-            await client.publish(thermostat.targetTemperatureCommandTopic, thermostatActualTemperature.toString());
-        }
+        const thermostatAction = messages[thermostat.actionStateTopic];
+        const desiredState =
+            atLeastOneRoomNeedsHeatedOrCooled(house, messages) && thermostatAction === thermostat.idleActionPayload ?
+                'on' : 'off';
+        const difference = determineDifference(desiredState, thermostat, messages);
+        const targetTemperature = Number(thermostatActualTemperature) + difference;
+        await client.publish(thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
     }
 };
 

@@ -1,8 +1,8 @@
 import {Chance} from 'chance';
 
+import {AsyncMqttClient} from 'async-mqtt';
 import {adjustThermostat, determineDifference} from '../../src/services/thermostatService';
 import {Thermostat} from '../../src/types/Mqtt';
-import {AsyncMqttClient} from 'async-mqtt';
 
 const chance = new Chance();
 
@@ -64,9 +64,9 @@ describe('thermostatService', () => {
             expect(client.publish).toHaveBeenCalledWith(thermostat.targetTemperatureCommandTopic, '70');
         });
 
-        it('should do nothing because thermostat is NOT idle', async () => {
+        it('should', async () => {
             const messages = {
-                [thermostat.actualTemperatureStateTopic]: 71,
+                [thermostat.actualTemperatureStateTopic]: 72,
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.coolingActionPayload,
                 [room.actualTemperatureStateTopic]: 72,
@@ -75,7 +75,8 @@ describe('thermostatService', () => {
 
             await adjustThermostat(house, messages, client);
 
-            expect(client.publish).not.toHaveBeenCalled();
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(thermostat.targetTemperatureCommandTopic, '73');
         });
     });
     describe('determineDifference', () => {

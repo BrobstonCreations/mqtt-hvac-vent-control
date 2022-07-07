@@ -1,7 +1,7 @@
 import {Chance} from 'chance';
 
-import {adjustVents} from '../../src/services/ventService';
 import {AsyncMqttClient} from 'async-mqtt';
+import {adjustVents} from '../../src/services/ventService';
 
 const chance = new Chance();
 

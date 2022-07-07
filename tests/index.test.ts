@@ -178,8 +178,8 @@ describe('index', () => {
         {
             actualRoomTemperature: 73,
             actualThermostatTemperature: 72,
-            expectedThermostatTemperaturePayload: 72,
-            name: 'should become idle if thermostat is idle, in heat mode, and all room\'s actual room temperature is greater than target room temperature',
+            expectedThermostatTemperaturePayload: 71,
+            name: 'should become idle if thermostat is in heat mode, and all room\'s actual room temperatures are greater than their target room temperature',
             targetRoomTemperature: 72,
             targetThermostatTemperature: 73,
             thermostatMode: thermostat.heatModePayload,
@@ -187,8 +187,8 @@ describe('index', () => {
         {
             actualRoomTemperature: 71,
             actualThermostatTemperature: 72,
-            expectedThermostatTemperaturePayload: 72,
-            name: 'should become idle if thermostat is idle, in cool mode, and all room\'s actual room temperature is less than target room temperature',
+            expectedThermostatTemperaturePayload: 73,
+            name: 'should become idle if thermostat is in cool mode, and all room\'s actual room temperatures are less than their target room temperature',
             targetRoomTemperature: 72,
             targetThermostatTemperature: 71,
             thermostatMode: thermostat.coolModePayload,
