@@ -92,6 +92,20 @@ describe('thermostatService', () => {
 
             expect(client.publish).not.toHaveBeenCalled();
         });
+
+        it('should remain idle if all rooms are at desired temperature', async () => {
+            const messages = {
+                [thermostat.actualTemperatureStateTopic]: 71,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [thermostat.actionStateTopic]: thermostat.idleActionPayload,
+                [room.actualTemperatureStateTopic]: 74,
+                [room.targetTemperatureStateTopic]: 75,
+            };
+
+            await adjustThermostat(house, messages, client);
+
+            expect(client.publish).not.toHaveBeenCalled();
+        });
     });
 
     describe('determineDifference', () => {
