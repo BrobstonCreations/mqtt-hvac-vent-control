@@ -2,7 +2,7 @@ import {Server} from 'aedes-server-factory';
 
 import {AsyncMqttClient, connectAsync} from 'async-mqtt';
 import {Chance} from 'chance';
-import {closeSync, openSync, unlinkSync} from 'fs';
+import {closeSync, openSync, unlinkSync, writeFileSync} from 'fs';
 
 import {MqttConnection} from '../src/types/Mqtt';
 
@@ -121,12 +121,15 @@ describe('index', () => {
         thermostatMode,
     }: any) => {
         await client.subscribe(vent.positionCommandTopic);
-
-        await start({
+        const options = {
             house,
             log: false,
             mqttConnection,
-        });
+        };
+        writeFileSync(optionsFilePath, JSON.stringify(options));
+        process.env.OPTIONS_FILE_PATH = optionsFilePath;
+
+        await start();
 
         await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
         await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
@@ -199,12 +202,15 @@ describe('index', () => {
         thermostatMode,
     }: any) => {
         await client.subscribe(thermostat.targetTemperatureCommandTopic);
-
-        await start({
+        const options = {
             house,
             log: false,
             mqttConnection,
-        });
+        };
+        writeFileSync(optionsFilePath, JSON.stringify(options));
+        process.env.OPTIONS_FILE_PATH = optionsFilePath;
+
+        await start();
 
         await client.publish(thermostat.modeStateTopic, thermostatMode);
         await client.publish(thermostat.actionStateTopic, thermostat.idleActionPayload);
