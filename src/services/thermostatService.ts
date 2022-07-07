@@ -23,24 +23,16 @@ export const adjustThermostat = async (house: House, messages: {[key: string]: s
 
 export const determineDifference = (
     desiredState: string,
-    thermostat: Thermostat,
+    {modeStateTopic, heatModePayload, coolModePayload}: Thermostat,
     messages: {[key: string]: string|number},
 ): number => {
-    switch (messages[thermostat.modeStateTopic]) {
-        case thermostat.heatModePayload:
-            switch (desiredState) {
-                case 'on':
-                    return 1;
-                case 'off':
-                    return -1;
-            }
-        case thermostat.coolModePayload:
-            switch (desiredState) {
-                case 'on':
-                    return -1;
-                case 'off':
-                    return 1;
-            }
+    const thermostatMode = messages[modeStateTopic];
+    if ((thermostatMode === heatModePayload && desiredState === 'on')
+        || (thermostatMode === coolModePayload && desiredState === 'off')) {
+            return 1;
+    } else if ((thermostatMode === heatModePayload && desiredState === 'off')
+        || (thermostatMode === coolModePayload && desiredState === 'on')) {
+            return -1;
     }
     return 0;
 };
