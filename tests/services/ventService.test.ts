@@ -1,6 +1,7 @@
 import {Chance} from 'chance';
 
 import {adjustVents} from '../../src/services/ventService';
+import {AsyncMqttClient} from 'async-mqtt';
 
 const chance = new Chance();
 
@@ -40,8 +41,8 @@ describe('ventService', () => {
             thermostat,
         };
         const client = {
-            publish: jest.fn(() => Promise.resolve()),
-        } as any;
+            publish: jest.fn(() => Promise.resolve()) as any,
+        } as AsyncMqttClient;
 
         afterEach(() => {
             jest.clearAllMocks();
