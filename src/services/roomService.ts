@@ -1,8 +1,8 @@
-import {House, Room} from '../types/Mqtt';
+import {House, Room, Vent} from '../types/Mqtt';
 
-export const allRoomsAreAtDesiredTemperature = (house: House, messages: {[key: string]: string|number}): boolean => {
+export const allRoomsAreAtDesiredTemperature = (house: House, messages: {[key: string]: string|number}): any => {
+    const thermostatMode = messages[house.thermostat.modeStateTopic];
     return house.rooms.every((room: Room) => {
-        const thermostatMode = messages[house.thermostat.modeStateTopic];
         const roomActualTemperature = messages[room.actualTemperatureStateTopic];
         const roomTargetTemperature = messages[room.targetTemperatureStateTopic];
 
@@ -14,3 +14,9 @@ export const allRoomsAreAtDesiredTemperature = (house: House, messages: {[key: s
         }
     });
 };
+
+export const getAllVents = (rooms: Room[]): Vent[] =>
+    rooms.reduce((accumulator: Vent[], room: Room) => [
+        ...accumulator,
+        ...room.vents,
+    ], []);

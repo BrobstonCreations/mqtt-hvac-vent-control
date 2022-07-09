@@ -1,11 +1,15 @@
 import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
-import {adjustVents} from '../../src/services/ventService';
+import {adjustVents, openAllVents} from '../../src/services/ventService';
 
 const chance = new Chance();
 
 describe('ventService', () => {
+    const client = {
+        publish: jest.fn(() => Promise.resolve()) as any,
+    } as AsyncMqttClient;
+
     describe('adjustVents', () => {
         const vent = {
             closePositionPayload: 'close',
@@ -40,9 +44,6 @@ describe('ventService', () => {
             rooms: [room],
             thermostat,
         };
-        const client = {
-            publish: jest.fn(() => Promise.resolve()) as any,
-        } as AsyncMqttClient;
 
         afterEach(() => {
             jest.clearAllMocks();
@@ -74,6 +75,64 @@ describe('ventService', () => {
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should open all vents if rooms are at desired temps', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: 70,
+                [room.targetTemperatureStateTopic]: 71,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [vent.positionStateTopic]: vent.closedStatePayload,
+            };
+
+            await adjustVents(house, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+    });
+
+    describe('openAllVents', () => {
+        it ('open all vents if closed', async () => {
+            const vent1 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/room_south/vent',
+                positionStateTopic: 'stat/room_south/vent',
+            };
+            const vent2 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/room_north/vent',
+                positionStateTopic: 'stat/room_north/vent',
+            };
+            const vent3 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/room_east/vent',
+                positionStateTopic: 'stat/room_east/vent',
+            };
+            const vents = [vent1, vent2, vent3];
+            const messages = {
+                [vent1.positionStateTopic]: vent1.closedStatePayload,
+                [vent2.positionStateTopic]: vent2.closedStatePayload,
+                [vent3.positionStateTopic]: vent3.openedStatePayload,
+            };
+
+            await openAllVents(vents, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(2);
+            expect(client.publish).toHaveBeenCalledWith(vent1.positionCommandTopic, vent1.openPositionPayload);
+            expect(client.publish).toHaveBeenCalledWith(vent2.positionCommandTopic, vent2.openPositionPayload);
         });
     });
 });

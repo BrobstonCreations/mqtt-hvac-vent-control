@@ -1,6 +1,6 @@
 import {Chance} from 'chance';
 
-import {allRoomsAreAtDesiredTemperature} from '../../src/services/roomService';
+import {allRoomsAreAtDesiredTemperature, getAllVents} from '../../src/services/roomService';
 
 const chance = new Chance();
 
@@ -126,6 +126,56 @@ describe('roomService', () => {
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(false);
+        });
+
+        it('should return false if no messages', () => {
+            const messages = {};
+
+            const actual = allRoomsAreAtDesiredTemperature(house, messages);
+
+            console.log('actual:', actual);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('getAllVents', () => {
+        it('get all vents', async () => {
+            const vent1 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/south/vent',
+                positionStateTopic: 'stat/south/vent',
+            };
+            const room1 = {
+                actualTemperatureStateTopic: 'stat/room1/actual_temperature',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room1/target_temperature',
+                vents: [vent1],
+            };
+            const vent2 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/north/vent',
+                positionStateTopic: 'stat/north/vent',
+            };
+            const room2 = {
+                actualTemperatureStateTopic: 'stat/room2/actual_temperature',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room2/target_temperature',
+                vents: [vent2],
+            };
+            const rooms = [room1, room2];
+
+            const vents = getAllVents(rooms);
+
+            expect(vents).toEqual([vent1, vent2]);
         });
     });
 });

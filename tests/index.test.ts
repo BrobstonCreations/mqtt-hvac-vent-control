@@ -28,10 +28,16 @@ describe('index', () => {
         positionCommandTopic: 'cmd/room_south/vent',
         positionStateTopic: 'stat/room_south/vent',
     };
-    const room = {
-        actualTemperatureStateTopic: 'stat/room/actual_temperature',
+    const room1 = {
+        actualTemperatureStateTopic: 'stat/room1/actual_temperature',
         name: chance.word(),
-        targetTemperatureStateTopic: 'stat/room/target_temperature',
+        targetTemperatureStateTopic: 'stat/room1/target_temperature',
+        vents: [vent],
+    };
+    const room2 = {
+        actualTemperatureStateTopic: 'stat/room2/actual_temperature',
+        name: chance.word(),
+        targetTemperatureStateTopic: 'stat/room2/target_temperature',
         vents: [vent],
     };
     const thermostat = {
@@ -49,7 +55,7 @@ describe('index', () => {
         targetTemperatureStateTopic: 'stat/ecobee/target_temperature',
     };
     const house = {
-        rooms: [room],
+        rooms: [room1, room2],
         thermostat,
     };
 
@@ -73,50 +79,64 @@ describe('index', () => {
 
     it.each([
         {
-            actualRoomTemperature: 72,
+            actualRoom1Temperature: 72,
+            actualRoom2Temperature: 75,
             expectedVentPositionPayload: vent.openPositionPayload,
-            name: 'should open vent if thermostat is in heat mode and actual room temperature is less than target room temperature',
-            targetRoomTemperature: 73,
+            name: 'should open vent if thermostat is in heat mode and actual room1 temperature is less than target room1 temperature',
+            targetRoom1Temperature: 73,
+            targetRoom2Temperature: 76,
             thermostatMode: thermostat.heatModePayload,
         },
         {
-            actualRoomTemperature: 72,
+            actualRoom1Temperature: 72,
+            actualRoom2Temperature: 76,
             expectedVentPositionPayload: vent.openPositionPayload,
-            name: 'should open vent if thermostat is in cool mode and actual room temperature is greater than target room temperature',
-            targetRoomTemperature: 71,
+            name: 'should open vent if thermostat is in cool mode and actual room1 temperature is greater than target room1 temperature',
+            targetRoom1Temperature: 71,
+            targetRoom2Temperature: 75,
             thermostatMode: thermostat.coolModePayload,
         },
         {
-            actualRoomTemperature: 72,
+            actualRoom1Temperature: 72,
+            actualRoom2Temperature: 75,
             expectedVentPositionPayload: vent.closePositionPayload,
-            name: 'should close vent if thermostat is in heat mode and actual room temperature is greater than target room temperature',
-            targetRoomTemperature: 71,
+            name: 'should close vent if thermostat is in heat mode and actual room1 temperature is greater than target room1 temperature',
+            targetRoom1Temperature: 71,
+            targetRoom2Temperature: 76,
             thermostatMode: thermostat.heatModePayload,
         },
         {
-            actualRoomTemperature: 72,
+            actualRoom1Temperature: 72,
+            actualRoom2Temperature: 75,
             expectedVentPositionPayload: vent.closePositionPayload,
             name: 'should close vent if thermostat is in cool mode and actual room temperature is less than target room temperature',
-            targetRoomTemperature: 73,
+            targetRoom1Temperature: 73,
+            targetRoom2Temperature: 76,
             thermostatMode: thermostat.coolModePayload,
         },
         {
-            actualRoomTemperature: 72,
+            actualRoom1Temperature: 72,
+            actualRoom2Temperature: 75,
             expectedVentPositionPayload: vent.closePositionPayload,
             name: 'should close vent if thermostat is in heat mode and actual room temperature is equal to target room temperature',
-            targetRoomTemperature: 72,
+            targetRoom1Temperature: 72,
+            targetRoom2Temperature: 76,
             thermostatMode: thermostat.heatModePayload,
         },
         {
-            actualRoomTemperature: 72,
+            actualRoom1Temperature: 72,
+            actualRoom2Temperature: 75,
             expectedVentPositionPayload: vent.closePositionPayload,
             name: 'should close vent if thermostat is in cool mode and actual room temperature is equal to target room temperature',
-            targetRoomTemperature: 72,
+            targetRoom1Temperature: 72,
+            targetRoom2Temperature: 76,
             thermostatMode: thermostat.coolModePayload,
         },
     ])('$name', async ({
-        actualRoomTemperature,
-        targetRoomTemperature,
+        actualRoom1Temperature,
+        actualRoom2Temperature,
+        targetRoom1Temperature,
+        targetRoom2Temperature,
         expectedVentPositionPayload,
         thermostatMode,
     }: any) => {
@@ -131,9 +151,11 @@ describe('index', () => {
 
         await start();
 
-        await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
-        await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
         await client.publish(thermostat.modeStateTopic, thermostatMode);
+        await client.publish(room1.targetTemperatureStateTopic, targetRoom1Temperature.toString());
+        await client.publish(room1.actualTemperatureStateTopic, actualRoom1Temperature.toString());
+        await client.publish(room2.actualTemperatureStateTopic, actualRoom2Temperature.toString());
+        await client.publish(room2.targetTemperatureStateTopic, targetRoom2Temperature.toString());
         const actualPayload = await onMessageAsync(vent.positionCommandTopic, client);
         expect(actualPayload).toEqual(expectedVentPositionPayload);
     });
@@ -198,8 +220,8 @@ describe('index', () => {
         await client.publish(thermostat.actionStateTopic, thermostat.idleActionPayload);
         await client.publish(thermostat.actualTemperatureStateTopic, actualThermostatTemperature.toString());
         await client.publish(thermostat.targetTemperatureStateTopic, targetThermostatTemperature.toString());
-        await client.publish(room.actualTemperatureStateTopic, actualRoomTemperature.toString());
-        await client.publish(room.targetTemperatureStateTopic, targetRoomTemperature.toString());
+        await client.publish(room1.actualTemperatureStateTopic, actualRoomTemperature.toString());
+        await client.publish(room1.targetTemperatureStateTopic, targetRoomTemperature.toString());
         const actualPayload = await onMessageAsync(thermostat.targetTemperatureCommandTopic, client);
         expect(actualPayload).toEqual(expectedThermostatTemperaturePayload.toString());
     });
