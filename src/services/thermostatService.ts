@@ -1,6 +1,6 @@
 import {AsyncMqttClient} from 'async-mqtt';
 import {House, Thermostat} from '../types/Mqtt';
-import {allRoomsAreAtDesiredTemperature, atLeastOneRoomNeedsHeatedOrCooled} from './roomService';
+import {allRoomsAreAtDesiredTemperature} from './roomService';
 
 export const adjustThermostat = async (
     house: House,
@@ -10,7 +10,7 @@ export const adjustThermostat = async (
     const {thermostat}: House = house;
     const thermostatAction = messages[thermostat.actionStateTopic];
     if (thermostatAction === thermostat.idleActionPayload) {
-        atLeastOneRoomNeedsHeatedOrCooled(house, messages)
+        !allRoomsAreAtDesiredTemperature(house, messages)
             && await publishThermostatAdjustment('on', thermostat, messages, client);
     } else {
         allRoomsAreAtDesiredTemperature(house, messages)
