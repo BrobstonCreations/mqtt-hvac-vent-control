@@ -13,6 +13,7 @@ export interface Room {
 export interface Vent {
     closePositionPayload: string;
     closedStatePayload: string;
+    closedWhenIdle?: boolean;
     positionCommandTopic: string;
     name: string;
     openPositionPayload: string;

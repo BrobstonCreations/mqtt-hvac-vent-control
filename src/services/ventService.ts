@@ -48,7 +48,7 @@ export const openAllVents = async (
 ): Promise<void> => {
     await Promise.all(
         vents.reduce((accumulator: any, vent: Vent) => {
-            if (messages[vent.positionStateTopic] === vent.closedStatePayload) {
+            if (messages[vent.positionStateTopic] === vent.closedStatePayload && !vent.closedWhenIdle) {
                 return [
                     ...accumulator,
                     client.publish(vent.positionCommandTopic, vent.openPositionPayload),
