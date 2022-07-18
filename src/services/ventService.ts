@@ -49,7 +49,7 @@ export const adjustRoomsVents = async (
                 const thermostatMode = messages[house.thermostat.modeStateTopic];
                 const ventPosition = messages[vent.positionStateTopic];
                 if (thermostatMode === house.thermostat.heatModePayload) {
-                    const ventPositionPayload = roomActualTemperature >= roomTargetTemperature ?
+                    const ventPositionPayload = roomTargetTemperature <= roomActualTemperature ?
                         vent.closePositionPayload : vent.openPositionPayload;
                     if (!ventPosition || !ventPosition.startsWith(ventPositionPayload)) {
                         return client.publish(vent.positionCommandTopic, ventPositionPayload);
