@@ -1,6 +1,6 @@
 import {AsyncMqttClient, connect} from 'async-mqtt';
 
-import {SYSTEM_NAME} from '../src/constants/system';
+import {SYSTEM_NAME} from './constants/system';
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
 import {adjustSystem} from './services/systemService';
