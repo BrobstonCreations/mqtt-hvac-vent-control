@@ -136,6 +136,18 @@ describe('ventService', () => {
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
         });
 
+        it('should do nothing if thermostate mode is missing', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: '71',
+                [room.targetTemperatureStateTopic]: '70',
+                [vent.positionStateTopic]: vent.openedStatePayload,
+            };
+
+            await adjustRoomsVents(house, messages, client);
+
+            expect(client.publish).not.toHaveBeenCalled();
+        });
+
         it('should do nothing if opened, actual temp is above target, and thermostat cool mode', async () => {
             const messages = {
                 [room.actualTemperatureStateTopic]: '71',

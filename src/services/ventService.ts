@@ -46,22 +46,30 @@ export const adjustRoomsVents = async (
             const roomActualTemperature = messages[room.actualTemperatureStateTopic];
             const roomTargetTemperature = messages[room.targetTemperatureStateTopic];
             if (roomActualTemperature && roomTargetTemperature) {
-                const thermostatMode = messages[house.thermostat.modeStateTopic];
                 const ventPosition = messages[vent.positionStateTopic];
-                if (thermostatMode === house.thermostat.heatModePayload) {
-                    const ventPositionPayload = roomTargetTemperature <= roomActualTemperature ?
-                        vent.closePositionPayload : vent.openPositionPayload;
-                    if (!ventPosition || !ventPosition.startsWith(ventPositionPayload)) {
-                        return client.publish(vent.positionCommandTopic, ventPositionPayload);
-                    }
-                } else if (thermostatMode === house.thermostat.coolModePayload) {
-                    const ventPositionPayload = roomActualTemperature <= roomTargetTemperature ?
-                        vent.closePositionPayload : vent.openPositionPayload;
-                    if (!ventPosition || !ventPosition.startsWith(ventPositionPayload)) {
-                        return client.publish(vent.positionCommandTopic, ventPositionPayload);
-                    }
+                const ventPositionPayload = determineVentPositionPayload(house, room, vent, messages);
+                if (!ventPosition || ventPositionPayload !== 'null' && !ventPosition.startsWith(ventPositionPayload)) {
+                    return client.publish(vent.positionCommandTopic, ventPositionPayload);
                 }
             }
         }),
     ).flat());
+};
+
+const determineVentPositionPayload = (
+    {thermostat: {modeStateTopic, heatModePayload, coolModePayload}}: House,
+    {actualTemperatureStateTopic, targetTemperatureStateTopic}: Room,
+    {closePositionPayload, openPositionPayload}: Vent,
+    messages: {[key: string]: string},
+): string => {
+    const thermostatMode = messages[modeStateTopic];
+    const roomActualTemperature = messages[actualTemperatureStateTopic];
+    const roomTargetTemperature = messages[targetTemperatureStateTopic];
+    switch (thermostatMode) {
+        case heatModePayload:
+            return roomTargetTemperature <= roomActualTemperature ? closePositionPayload : openPositionPayload;
+        case coolModePayload:
+            return roomActualTemperature <= roomTargetTemperature ? closePositionPayload : openPositionPayload;
+    }
+    return 'null';
 };
