@@ -2,11 +2,45 @@ import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
 import {SYSTEM_NAME} from '../../src/constants/system';
-import {adjustVents, openAllVents} from '../../src/services/ventService';
+import {adjustRoomsVents, adjustVents, openAllVents} from '../../src/services/ventService';
 
 const chance = new Chance();
 
 describe('ventService', () => {
+    const vent = {
+        closePositionPayload: 'close',
+        closedStatePayload: 'closed',
+        closedWhenIdle: false,
+        name: chance.word(),
+        openPositionPayload: 'open',
+        openedStatePayload: 'opened',
+        positionCommandTopic: 'cmd/room_south/vent',
+        positionStateTopic: 'stat/room_south/vent',
+    };
+    const room = {
+        actualTemperatureStateTopic: 'stat/room/actual_temperature',
+        name: chance.word(),
+        targetTemperatureStateTopic: 'stat/room/target_temperature',
+        vents: [vent],
+    };
+    const thermostat = {
+        actionStateTopic: 'stat/ecobee/action',
+        actualTemperatureStateTopic: 'stat/ecobee/actual_temperature',
+        coolModePayload: 'cool',
+        coolingActionPayload: 'cooling',
+        heatModePayload: 'heat',
+        heatingActionPayload: 'heating',
+        idleActionPayload: 'idle',
+        modeStateTopic: 'stat/ecobee/mode',
+        name: chance.word(),
+        offModePayload: 'off',
+        targetTemperatureCommandTopic: 'cmd/ecobee/temperature',
+        targetTemperatureStateTopic: 'stat/ecobee/target_temperature',
+    };
+    const house = {
+        rooms: [room],
+        thermostat,
+    };
     const client = {
         publish: jest.fn(() => Promise.resolve()) as any,
     } as AsyncMqttClient;
@@ -16,73 +50,10 @@ describe('ventService', () => {
     });
 
     describe('adjustVents', () => {
-        const vent = {
-            closePositionPayload: 'close',
-            closedStatePayload: 'closed',
-            closedWhenIdle: false,
-            name: chance.word(),
-            openPositionPayload: 'open',
-            openedStatePayload: 'opened',
-            positionCommandTopic: 'cmd/room_south/vent',
-            positionStateTopic: 'stat/room_south/vent',
-        };
-        const room = {
-            actualTemperatureStateTopic: 'stat/room/actual_temperature',
-            name: chance.word(),
-            targetTemperatureStateTopic: 'stat/room/target_temperature',
-            vents: [vent],
-        };
-        const thermostat = {
-            actionStateTopic: 'stat/ecobee/action',
-            actualTemperatureStateTopic: 'stat/ecobee/actual_temperature',
-            coolModePayload: 'cool',
-            coolingActionPayload: 'cooling',
-            heatModePayload: 'heat',
-            heatingActionPayload: 'heating',
-            idleActionPayload: 'idle',
-            modeStateTopic: 'stat/ecobee/mode',
-            name: chance.word(),
-            offModePayload: 'off',
-            targetTemperatureCommandTopic: 'cmd/ecobee/temperature',
-            targetTemperatureStateTopic: 'stat/ecobee/target_temperature',
-        };
-        const house = {
-            rooms: [room],
-            thermostat,
-        };
-
-        it('should open vent when actual temp is above target and thermostat is cool mode', async () => {
-            const messages = {
-                [room.actualTemperatureStateTopic]: 71,
-                [room.targetTemperatureStateTopic]: 70,
-                [thermostat.modeStateTopic]: thermostat.coolModePayload,
-                [vent.positionStateTopic]: vent.closedStatePayload,
-            };
-
-            await adjustVents(house, messages, client);
-
-            expect(client.publish).toHaveBeenCalledTimes(1);
-            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
-        });
-
-        it('should open vent when actual temp is below target and thermostat is heat mode', async () => {
-            const messages = {
-                [room.actualTemperatureStateTopic]: 70,
-                [room.targetTemperatureStateTopic]: 71,
-                [thermostat.modeStateTopic]: thermostat.heatModePayload,
-                [vent.positionStateTopic]: vent.closedStatePayload,
-            };
-
-            await adjustVents(house, messages, client);
-
-            expect(client.publish).toHaveBeenCalledTimes(1);
-            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
-        });
-
         it('should open all vents if rooms are at desired temps', async () => {
             const messages = {
-                [room.actualTemperatureStateTopic]: 70,
-                [room.targetTemperatureStateTopic]: 71,
+                [room.actualTemperatureStateTopic]: '70',
+                [room.targetTemperatureStateTopic]: '71',
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [vent.positionStateTopic]: vent.closedStatePayload,
             };
@@ -95,14 +66,85 @@ describe('ventService', () => {
 
         it('should do nothing if system is paused', async () => {
             const messages = {
-                [room.actualTemperatureStateTopic]: 71,
-                [room.targetTemperatureStateTopic]: 70,
+                [room.actualTemperatureStateTopic]: '71',
+                [room.targetTemperatureStateTopic]: '70',
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [vent.positionStateTopic]: vent.closedStatePayload,
                 [`cmd/${SYSTEM_NAME}/pause`]: 'true',
             };
 
             await adjustVents(house, messages, client);
+
+            expect(client.publish).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('adjustRoomsVents', () => {
+        it('should open vent when actual temp is above target and thermostat is cool mode', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: '71',
+                [room.targetTemperatureStateTopic]: '70',
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [vent.positionStateTopic]: vent.closedStatePayload,
+            };
+
+            await adjustRoomsVents(house, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should open vent when actual temp is below target and thermostat is heat mode', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: '70',
+                [room.targetTemperatureStateTopic]: '71',
+                [thermostat.modeStateTopic]: thermostat.heatModePayload,
+                [vent.positionStateTopic]: vent.closedStatePayload,
+            };
+
+            await adjustRoomsVents(house, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should close vent when actual temp is below target and thermostat is cool mode', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: '70',
+                [room.targetTemperatureStateTopic]: '71',
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [vent.positionStateTopic]: vent.openedStatePayload,
+            };
+
+            await adjustRoomsVents(house, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
+        });
+
+        it('should close vent when actual temp is above target and thermostat is heat mode', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: '71',
+                [room.targetTemperatureStateTopic]: '70',
+                [thermostat.modeStateTopic]: thermostat.heatModePayload,
+                [vent.positionStateTopic]: vent.openedStatePayload,
+            };
+
+            await adjustRoomsVents(house, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
+        });
+
+        it('should do nothing if opened, actual temp is above target, and thermostat cool mode', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: '71',
+                [room.targetTemperatureStateTopic]: '70',
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [vent.positionStateTopic]: vent.openedStatePayload,
+            };
+
+            await adjustRoomsVents(house, messages, client);
 
             expect(client.publish).not.toHaveBeenCalled();
         });

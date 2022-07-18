@@ -5,7 +5,7 @@ import {allRoomsAreAtDesiredTemperature} from './roomService';
 
 export const adjustThermostat = async (
     house: House,
-    messages: {[key: string]: string|number},
+    messages: {[key: string]: string},
     client: AsyncMqttClient,
 ): Promise<void> => {
     if (messages[`cmd/${SYSTEM_NAME}/pause`] !== 'true') {
@@ -24,7 +24,7 @@ export const adjustThermostat = async (
 export const determineDifference = (
     desiredState: string,
     {modeStateTopic, heatModePayload, coolModePayload}: Thermostat,
-    messages: {[key: string]: string|number},
+    messages: {[key: string]: string},
 ): number => {
     const thermostatMode = messages[modeStateTopic];
     if ((thermostatMode === heatModePayload && desiredState === 'on')
@@ -40,7 +40,7 @@ export const determineDifference = (
 const publishThermostatAdjustment = async (
     desiredState: string,
     thermostat: Thermostat,
-    messages: {[key: string]: string|number},
+    messages: {[key: string]: string},
     client: AsyncMqttClient,
 ): Promise<void> => {
     const difference = determineDifference(desiredState, thermostat, messages);

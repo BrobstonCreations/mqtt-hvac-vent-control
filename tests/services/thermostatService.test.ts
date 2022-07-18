@@ -52,11 +52,11 @@ describe('thermostatService', () => {
 
         it('should decrease thermostat target temperature by 1', async () => {
             const messages = {
-                [thermostat.actualTemperatureStateTopic]: 71,
+                [thermostat.actualTemperatureStateTopic]: '71',
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.idleActionPayload,
-                [room.actualTemperatureStateTopic]: 75,
-                [room.targetTemperatureStateTopic]: 74,
+                [room.actualTemperatureStateTopic]: '75',
+                [room.targetTemperatureStateTopic]: '74',
             };
 
             await adjustThermostat(house, messages, client);
@@ -67,11 +67,11 @@ describe('thermostatService', () => {
 
         it('should increase thermostat target temperature by 1 if all room\'s actual temperatures are at or above the target temperature', async () => {
             const messages = {
-                [thermostat.actualTemperatureStateTopic]: 72,
+                [thermostat.actualTemperatureStateTopic]: '72',
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.coolingActionPayload,
-                [room.actualTemperatureStateTopic]: 74,
-                [room.targetTemperatureStateTopic]: 75,
+                [room.actualTemperatureStateTopic]: '74',
+                [room.targetTemperatureStateTopic]: '75',
             };
 
             await adjustThermostat(house, messages, client);
@@ -82,11 +82,11 @@ describe('thermostatService', () => {
 
         it('should continue cooling if at least one room\'s actual temperatures are is below target', async () => {
             const messages = {
-                [thermostat.actualTemperatureStateTopic]: 72,
+                [thermostat.actualTemperatureStateTopic]: '72',
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.coolingActionPayload,
-                [room.actualTemperatureStateTopic]: 74,
-                [room.targetTemperatureStateTopic]: 73,
+                [room.actualTemperatureStateTopic]: '74',
+                [room.targetTemperatureStateTopic]: '73',
             };
 
             await adjustThermostat(house, messages, client);
@@ -96,11 +96,11 @@ describe('thermostatService', () => {
 
         it('should remain idle if all rooms are at desired temperature', async () => {
             const messages = {
-                [thermostat.actualTemperatureStateTopic]: 71,
+                [thermostat.actualTemperatureStateTopic]: '71',
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.idleActionPayload,
-                [room.actualTemperatureStateTopic]: 74,
-                [room.targetTemperatureStateTopic]: 75,
+                [room.actualTemperatureStateTopic]: '74',
+                [room.targetTemperatureStateTopic]: '75',
             };
 
             await adjustThermostat(house, messages, client);
@@ -110,11 +110,11 @@ describe('thermostatService', () => {
 
         it('should do nothing if system is paused', async () => {
             const messages = {
-                [thermostat.actualTemperatureStateTopic]: 71,
+                [thermostat.actualTemperatureStateTopic]: '71',
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
                 [thermostat.actionStateTopic]: thermostat.idleActionPayload,
-                [room.actualTemperatureStateTopic]: 75,
-                [room.targetTemperatureStateTopic]: 74,
+                [room.actualTemperatureStateTopic]: '75',
+                [room.targetTemperatureStateTopic]: '74',
                 [`cmd/${SYSTEM_NAME}/pause`]: 'true',
             };
 

@@ -10,7 +10,7 @@ import {adjustVents} from './services/ventService';
 import Options from './types/Options';
 
 let client: AsyncMqttClient;
-let messages: {[key: string]: string|number} = {};
+let messages: {[key: string]: string} = {};
 
 export const start = async (
     options: Options = getOptionsFromEnvironmentOrFile(),
