@@ -1,6 +1,7 @@
 import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
+import {SYSTEM_NAME} from '../../src/constants/system';
 import {adjustVents, openAllVents} from '../../src/services/ventService';
 
 const chance = new Chance();
@@ -90,6 +91,20 @@ describe('ventService', () => {
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should do nothing if system is paused', async () => {
+            const messages = {
+                [room.actualTemperatureStateTopic]: 71,
+                [room.targetTemperatureStateTopic]: 70,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [vent.positionStateTopic]: vent.closedStatePayload,
+                [`cmd/${SYSTEM_NAME}/pause`]: 'true',
+            };
+
+            await adjustVents(house, messages, client);
+
+            expect(client.publish).not.toHaveBeenCalled();
         });
     });
 

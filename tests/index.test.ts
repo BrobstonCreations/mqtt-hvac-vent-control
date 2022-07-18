@@ -7,6 +7,7 @@ import {closeSync, openSync, unlinkSync, writeFileSync} from 'fs';
 import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
+import {SYSTEM_NAME} from '../src/constants/system';
 import {createServerAsync, onMessageAsync} from './utils/asyncHelper';
 
 const chance = new Chance();
@@ -224,6 +225,20 @@ describe('index', () => {
         await client.publish(room1.targetTemperatureStateTopic, targetRoomTemperature.toString());
         const actualPayload = await onMessageAsync(thermostat.targetTemperatureCommandTopic, client);
         expect(actualPayload).toEqual(expectedThermostatTemperaturePayload.toString());
+    });
+
+    it('should not adjust vents or thermostat if system is off', async () => {
+        await client.subscribe(`stat/${SYSTEM_NAME}/pause`);
+
+        await start({
+            house,
+            log: false,
+            mqttConnection,
+        });
+
+        await client.publish(`cmd/${SYSTEM_NAME}/pause`, 'true');
+        const actualPayload = await onMessageAsync(`stat/${SYSTEM_NAME}/pause`, client);
+        expect(actualPayload).toBe('true');
     });
 
     it('should invoke logging', async () => {

@@ -1,7 +1,9 @@
 import {AsyncMqttClient, connect} from 'async-mqtt';
 
+import {SYSTEM_NAME} from '../src/constants/system';
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
+import {adjustSystem} from './services/systemService';
 import {adjustThermostat} from './services/thermostatService';
 import {getAllStateTopicsFromObject} from './services/topicService';
 import {adjustVents} from './services/ventService';
@@ -27,7 +29,10 @@ export const start = async (
     if (log) {
         setupLogging(client);
     }
-    const allTopics = getAllStateTopicsFromObject(house);
+    const allTopics = [
+        ...getAllStateTopicsFromObject(house),
+        `cmd/${SYSTEM_NAME}/pause`,
+    ];
     await client.subscribe(allTopics);
     client.on('message', async (topic: string, payloadBuffer: Buffer)  => {
         const payload = payloadBuffer.toString();
@@ -37,6 +42,7 @@ export const start = async (
         }
         await adjustVents(house, messages, client);
         await adjustThermostat(house, messages, client);
+        await adjustSystem(topic, payload, client);
     });
 };
 

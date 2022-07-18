@@ -1,6 +1,7 @@
 import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
+import {SYSTEM_NAME} from '../../src/constants/system';
 import {adjustThermostat, determineDifference} from '../../src/services/thermostatService';
 import {Thermostat} from '../../src/types/Mqtt';
 
@@ -100,6 +101,21 @@ describe('thermostatService', () => {
                 [thermostat.actionStateTopic]: thermostat.idleActionPayload,
                 [room.actualTemperatureStateTopic]: 74,
                 [room.targetTemperatureStateTopic]: 75,
+            };
+
+            await adjustThermostat(house, messages, client);
+
+            expect(client.publish).not.toHaveBeenCalled();
+        });
+
+        it('should do nothing if system is paused', async () => {
+            const messages = {
+                [thermostat.actualTemperatureStateTopic]: 71,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [thermostat.actionStateTopic]: thermostat.idleActionPayload,
+                [room.actualTemperatureStateTopic]: 75,
+                [room.targetTemperatureStateTopic]: 74,
+                [`cmd/${SYSTEM_NAME}/pause`]: 'true',
             };
 
             await adjustThermostat(house, messages, client);
