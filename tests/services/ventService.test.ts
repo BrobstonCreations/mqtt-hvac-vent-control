@@ -20,6 +20,7 @@ describe('ventService', () => {
     const room = {
         actualTemperatureStateTopic: 'stat/room/actual_temperature',
         name: chance.word(),
+        roomModeCommandTopic: 'cmd/room/mode',
         targetTemperatureStateTopic: 'stat/room/target_temperature',
         vents: [vent],
     };
