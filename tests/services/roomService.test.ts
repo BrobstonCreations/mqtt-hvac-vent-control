@@ -131,11 +131,7 @@ describe('roomService', () => {
         it('should return false if no messages', () => {
             const messages = {};
 
-            const actual = allRoomsAreAtDesiredTemperature(house, messages);
-
-            console.log('actual:', actual);
-
-            expect(actual).toBe(false);
+            expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(false);
         });
     });
 
