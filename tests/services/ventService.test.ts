@@ -2,7 +2,7 @@ import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
 import {SYSTEM_NAME} from '../../src/constants/system';
-import {adjustRoomsVents, adjustVents, getVentStatePayload, openAllVents} from '../../src/services/ventService';
+import {adjustRoomsVents, adjustVents, getVentPositionPayload, openAllVents} from '../../src/services/ventService';
 
 const chance = new Chance();
 
@@ -296,12 +296,12 @@ describe('ventService', () => {
         });
     });
 
-    describe('getVentStatePayload', () => {
+    describe('getVentPositionPayload', () => {
         it('gets opened state payload', () => {
-            const openPositionPayload = chance.string();
             const openedStatePayload = chance.string();
+            const openPositionPayload = chance.string();
 
-            const actual = getVentStatePayload(openPositionPayload, {
+            const actual = getVentPositionPayload(openedStatePayload, {
                 closePositionPayload: chance.string(),
                 closedStatePayload: chance.string(),
                 name: chance.word(),
@@ -311,14 +311,14 @@ describe('ventService', () => {
                 positionStateTopic: chance.string(),
             });
 
-            expect(actual).toBe(openedStatePayload);
+            expect(actual).toBe(openPositionPayload);
         });
 
         it('gets close vent state payload', () => {
-            const closePositionPayload = chance.string();
             const closedStatePayload = chance.string();
+            const closePositionPayload = chance.string();
 
-            const actual = getVentStatePayload(closePositionPayload, {
+            const actual = getVentPositionPayload(closedStatePayload, {
                 closePositionPayload,
                 closedStatePayload,
                 name: chance.word(),
@@ -328,11 +328,11 @@ describe('ventService', () => {
                 positionStateTopic: chance.string(),
             });
 
-            expect(actual).toBe(closedStatePayload);
+            expect(actual).toBe(closePositionPayload);
         });
 
         it('gets no vent state payload', () => {
-            const actual = getVentStatePayload(chance.string(), {
+            const actual = getVentPositionPayload(chance.string(), {
                 closePositionPayload: chance.string(),
                 closedStatePayload: chance.string(),
                 name: chance.word(),

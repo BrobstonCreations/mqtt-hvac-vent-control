@@ -49,9 +49,8 @@ export const adjustRoomsVents = async (
             if (roomActualTemperature && roomTargetTemperature) {
                 const ventPosition = messages[vent.positionStateTopic];
                 const ventPositionPayload = determineVentPositionPayload(house, room, vent, messages);
-                console.log(vent);
-                console.log(messages);
-                if (!ventPosition || ventPositionPayload !== 'null' && !ventPosition.startsWith(ventPositionPayload)) {
+                const currentVentPosition = getVentPositionPayload(ventPosition, vent);
+                if (!ventPosition || ventPositionPayload !== 'null' && ventPositionPayload !== currentVentPosition) {
                     return client.publish(vent.positionCommandTopic, ventPositionPayload);
                 }
             }
@@ -59,15 +58,15 @@ export const adjustRoomsVents = async (
     ).flat());
 };
 
-export const getVentStatePayload = (
-    ventPositionPayload: string,
+export const getVentPositionPayload = (
+    ventState: string,
     {openPositionPayload, openedStatePayload, closePositionPayload, closedStatePayload}: Vent,
 ): string|void => {
-    switch (ventPositionPayload) {
-        case openPositionPayload:
-            return openedStatePayload;
-        case closePositionPayload:
-            return closedStatePayload;
+    switch (ventState) {
+        case openedStatePayload:
+            return openPositionPayload;
+        case closedStatePayload:
+            return closePositionPayload;
     }
 };
 
