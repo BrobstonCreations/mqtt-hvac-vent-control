@@ -165,6 +165,87 @@ describe('index', () => {
 
     it.each([
         {
+            actualRoom1Temperature: '72',
+            actualRoom2Temperature: '75',
+            expectedRoomModePayload: 'heat',
+            name: 'should command room mode heat if thermostat is in heat mode and actual room1 temperature is less than target room1 temperature',
+            targetRoom1Temperature: '73',
+            targetRoom2Temperature: '76',
+            thermostatMode: thermostat.heatModePayload,
+        },
+        {
+            actualRoom1Temperature: '72',
+            actualRoom2Temperature: '76',
+            expectedRoomModePayload: 'cool',
+            name: 'should command room mode cool if thermostat is in cool mode and actual room1 temperature is greater than target room1 temperature',
+            targetRoom1Temperature: '71',
+            targetRoom2Temperature: '75',
+            thermostatMode: thermostat.coolModePayload,
+        },
+        {
+            actualRoom1Temperature: '72',
+            actualRoom2Temperature: '75',
+            expectedRoomModePayload: 'off',
+            name: 'should command room mode off if thermostat is in heat mode and actual room1 temperature is greater than target room1 temperature',
+            targetRoom1Temperature: '71',
+            targetRoom2Temperature: '76',
+            thermostatMode: thermostat.heatModePayload,
+        },
+        {
+            actualRoom1Temperature: '72',
+            actualRoom2Temperature: '75',
+            expectedRoomModePayload: 'off',
+            name: 'should command room mode off if thermostat is in cool mode and actual room temperature is less than target room temperature',
+            targetRoom1Temperature: '73',
+            targetRoom2Temperature: '76',
+            thermostatMode: thermostat.coolModePayload,
+        },
+        {
+            actualRoom1Temperature: '72',
+            actualRoom2Temperature: '75',
+            expectedRoomModePayload: 'off',
+            name: 'should command room mode off if thermostat is in heat mode and actual room temperature is equal to target room temperature',
+            targetRoom1Temperature: '72',
+            targetRoom2Temperature: '76',
+            thermostatMode: thermostat.heatModePayload,
+        },
+        {
+            actualRoom1Temperature: '72',
+            actualRoom2Temperature: '75',
+            expectedRoomModePayload: 'off',
+            name: 'should command room mode off if thermostat is in cool mode and actual room temperature is equal to target room temperature',
+            targetRoom1Temperature: '72',
+            targetRoom2Temperature: '76',
+            thermostatMode: thermostat.coolModePayload,
+        },
+    ])('$name', async ({
+        actualRoom1Temperature,
+        actualRoom2Temperature,
+        targetRoom1Temperature,
+        targetRoom2Temperature,
+        expectedRoomModePayload,
+        thermostatMode,
+    }: any) => {
+        await client.subscribe(room1.modeCommandTopic);
+        const options = {
+            house,
+            log: false,
+            mqttConnection,
+        };
+
+        await start(options);
+
+        await client.publish(thermostat.modeStateTopic, thermostatMode);
+        await client.publish(room1.targetTemperatureStateTopic, targetRoom1Temperature.toString());
+        await client.publish(room1.actualTemperatureStateTopic, actualRoom1Temperature.toString());
+        await client.publish(room2.actualTemperatureStateTopic, actualRoom2Temperature.toString());
+        await client.publish(room2.targetTemperatureStateTopic, targetRoom2Temperature.toString());
+        const actualPayload = await onMessageAsync(room1.modeCommandTopic, client);
+        expect(actualPayload).toEqual(expectedRoomModePayload);
+    });
+
+    it.each([
+        {
             actualRoomTemperature: '72',
             actualThermostatTemperature: '72',
             expectedThermostatTemperaturePayload: '73',

@@ -3,6 +3,7 @@ import {AsyncMqttClient, connect} from 'async-mqtt';
 import {SYSTEM_NAME} from './constants/system';
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
+import {adjustRooms} from './services/roomService';
 import {adjustSystem} from './services/systemService';
 import {adjustThermostat} from './services/thermostatService';
 import {getAllStateTopicsFromObject} from './services/topicService';
@@ -41,6 +42,7 @@ export const start = async (
             console.log(JSON.stringify(messages, null, 2));
         }
         await adjustVents(house, messages, client);
+        await adjustRooms(house, messages, client);
         await adjustThermostat(house, messages, client);
         await adjustSystem(topic, payload, client);
     });

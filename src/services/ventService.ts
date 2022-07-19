@@ -2,7 +2,6 @@ import {AsyncMqttClient, IPublishPacket} from 'async-mqtt';
 import {SYSTEM_NAME} from '../constants/system';
 import {House, Room, Vent} from '../types/Mqtt';
 import {allRoomsAreAtDesiredTemperature, getAllVents} from './roomService';
-import any = jasmine.any;
 
 export const adjustVents = async (
     house: House,
