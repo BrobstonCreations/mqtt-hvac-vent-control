@@ -136,7 +136,7 @@ describe('ventService', () => {
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
         });
 
-        it('should do nothing if thermostate mode is missing', async () => {
+        it('should do nothing if thermostat mode is missing', async () => {
             const messages = {
                 [room.actualTemperatureStateTopic]: '71',
                 [room.targetTemperatureStateTopic]: '70',
