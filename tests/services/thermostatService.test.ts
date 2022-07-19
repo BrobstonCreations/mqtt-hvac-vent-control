@@ -20,8 +20,8 @@ describe('thermostatService', () => {
         };
         const room = {
             actualTemperatureStateTopic: 'stat/room/actual_temperature',
+            modeCommandTopic: 'cmd/room/mode',
             name: chance.word(),
-            roomModeCommandTopic: 'cmd/room/mode',
             targetTemperatureStateTopic: 'stat/room/target_temperature',
             vents: [vent],
         };

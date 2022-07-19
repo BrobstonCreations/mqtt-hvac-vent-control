@@ -8,22 +8,22 @@ describe('roomService', () => {
     describe('allRoomsAreAtDesiredTemperature', () => {
         const room1 = {
             actualTemperatureStateTopic: chance.string(),
+            modeCommandTopic: chance.string(),
             name: chance.string(),
-            roomModeCommandTopic: chance.string(),
             targetTemperatureStateTopic: chance.string(),
             vents: [],
         };
         const room2 = {
             actualTemperatureStateTopic: chance.string(),
+            modeCommandTopic: chance.string(),
             name: chance.string(),
-            roomModeCommandTopic: chance.string(),
             targetTemperatureStateTopic: chance.string(),
             vents: [],
         };
         const room3 = {
             actualTemperatureStateTopic: chance.string(),
+            modeCommandTopic: chance.string(),
             name: chance.string(),
-            roomModeCommandTopic: chance.string(),
             targetTemperatureStateTopic: chance.string(),
             vents: [],
         };
@@ -151,8 +151,8 @@ describe('roomService', () => {
             };
             const room1 = {
                 actualTemperatureStateTopic: 'stat/room1/actual_temperature',
+                modeCommandTopic: 'cmd/room1/mode',
                 name: chance.word(),
-                roomModeCommandTopic: 'cmd/room1/mode',
                 targetTemperatureStateTopic: 'stat/room1/target_temperature',
                 vents: [vent1],
             };
@@ -167,8 +167,8 @@ describe('roomService', () => {
             };
             const room2 = {
                 actualTemperatureStateTopic: 'stat/room2/actual_temperature',
+                modeCommandTopic: 'cmd/room2/mode',
                 name: chance.word(),
-                roomModeCommandTopic: 'cmd/room2/mode',
                 targetTemperatureStateTopic: 'stat/room2/target_temperature',
                 vents: [vent2],
             };

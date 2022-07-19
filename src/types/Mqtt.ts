@@ -6,7 +6,7 @@ export interface House {
 export interface Room {
     actualTemperatureStateTopic: string;
     name: string;
-    roomModeCommandTopic: string;
+    modeCommandTopic: string;
     targetTemperatureStateTopic: string;
     vents: Vent[];
 }
