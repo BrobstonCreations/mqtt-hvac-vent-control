@@ -2,6 +2,7 @@ import {AsyncMqttClient, IPublishPacket} from 'async-mqtt';
 import {SYSTEM_NAME} from '../constants/system';
 import {House, Room, Vent} from '../types/Mqtt';
 import {allRoomsAreAtDesiredTemperature, getAllVents} from './roomService';
+import any = jasmine.any;
 
 export const adjustVents = async (
     house: House,
@@ -58,11 +59,15 @@ export const adjustRoomsVents = async (
     ).flat());
 };
 
-export const getVentState = (ventPositionPayload: string, vent: Vent): string|void => {
-    if (ventPositionPayload === 'open') {
-        return 'opened';
-    } else if (ventPositionPayload === 'close') {
-        return 'closed';
+export const getVentStatePayload = (
+    ventPositionPayload: string,
+    {openPositionPayload, openedStatePayload, closePositionPayload, closedStatePayload}: Vent,
+): string|void => {
+    switch (ventPositionPayload) {
+        case openPositionPayload:
+            return openedStatePayload;
+        case closePositionPayload:
+            return closedStatePayload;
     }
 };
 

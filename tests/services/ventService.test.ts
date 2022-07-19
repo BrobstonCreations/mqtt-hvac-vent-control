@@ -2,7 +2,7 @@ import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
 import {SYSTEM_NAME} from '../../src/constants/system';
-import {adjustRoomsVents, adjustVents, getVentState, openAllVents} from '../../src/services/ventService';
+import {adjustRoomsVents, adjustVents, getVentStatePayload, openAllVents} from '../../src/services/ventService';
 
 const chance = new Chance();
 
@@ -296,13 +296,53 @@ describe('ventService', () => {
         });
     });
 
-    fdescribe('getVentState', () => {
-        it('gets open vent state', () => {
-            expect(getVentState(vent.openPositionPayload, vent)).toBe(vent.openedStatePayload);
+    describe('getVentStatePayload', () => {
+        it('gets opened state payload', () => {
+            const openPositionPayload = chance.string();
+            const openedStatePayload = chance.string();
+
+            const actual = getVentStatePayload(openPositionPayload, {
+                closePositionPayload: chance.string(),
+                closedStatePayload: chance.string(),
+                name: chance.word(),
+                openPositionPayload,
+                openedStatePayload,
+                positionCommandTopic: chance.string(),
+                positionStateTopic: chance.string(),
+            });
+
+            expect(actual).toBe(openedStatePayload);
         });
 
-        it('gets close vent state', () => {
-            expect(getVentState(vent.closePositionPayload, vent)).toBe(vent.closedStatePayload);
+        it('gets close vent state payload', () => {
+            const closePositionPayload = chance.string();
+            const closedStatePayload = chance.string();
+
+            const actual = getVentStatePayload(closePositionPayload, {
+                closePositionPayload,
+                closedStatePayload,
+                name: chance.word(),
+                openPositionPayload: chance.string(),
+                openedStatePayload: chance.string(),
+                positionCommandTopic: chance.string(),
+                positionStateTopic: chance.string(),
+            });
+
+            expect(actual).toBe(closedStatePayload);
+        });
+
+        it('gets no vent state payload', () => {
+            const actual = getVentStatePayload(chance.string(), {
+                closePositionPayload: chance.string(),
+                closedStatePayload: chance.string(),
+                name: chance.word(),
+                openPositionPayload: chance.string(),
+                openedStatePayload: chance.string(),
+                positionCommandTopic: chance.string(),
+                positionStateTopic: chance.string(),
+            });
+
+            expect(actual).toBe(undefined);
         });
     });
 });
