@@ -2,7 +2,7 @@ import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
 import {SYSTEM_NAME} from '../../src/constants/system';
-import {adjustRoomsVents, adjustVents, openAllVents} from '../../src/services/ventService';
+import {adjustRoomsVents, adjustVents, getVentState, openAllVents} from '../../src/services/ventService';
 
 const chance = new Chance();
 
@@ -148,7 +148,7 @@ describe('ventService', () => {
             expect(client.publish).not.toHaveBeenCalled();
         });
 
-        it('should do nothing if opened, actual temp is above target, and thermostat cool mode', async () => {
+        it('should do nothing if needing to open, but already opened', async () => {
             const messages = {
                 [room.actualTemperatureStateTopic]: '71',
                 [room.targetTemperatureStateTopic]: '70',
@@ -293,6 +293,16 @@ describe('ventService', () => {
             expect(client.publish).toHaveBeenCalledTimes(2);
             expect(client.publish).toHaveBeenCalledWith(vent1.positionCommandTopic, vent1.openPositionPayload);
             expect(client.publish).toHaveBeenCalledWith(vent2.positionCommandTopic, vent2.openPositionPayload);
+        });
+    });
+
+    fdescribe('getVentState', () => {
+        it('gets open vent state', () => {
+            expect(getVentState(vent.openPositionPayload, vent)).toBe(vent.openedStatePayload);
+        });
+
+        it('gets close vent state', () => {
+            expect(getVentState(vent.closePositionPayload, vent)).toBe(vent.closedStatePayload);
         });
     });
 });

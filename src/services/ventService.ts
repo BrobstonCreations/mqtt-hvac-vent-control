@@ -48,12 +48,22 @@ export const adjustRoomsVents = async (
             if (roomActualTemperature && roomTargetTemperature) {
                 const ventPosition = messages[vent.positionStateTopic];
                 const ventPositionPayload = determineVentPositionPayload(house, room, vent, messages);
+                console.log(vent);
+                console.log(messages);
                 if (!ventPosition || ventPositionPayload !== 'null' && !ventPosition.startsWith(ventPositionPayload)) {
                     return client.publish(vent.positionCommandTopic, ventPositionPayload);
                 }
             }
         }),
     ).flat());
+};
+
+export const getVentState = (ventPositionPayload: string, vent: Vent): string|void => {
+    if (ventPositionPayload === 'open') {
+        return 'opened';
+    } else if (ventPositionPayload === 'close') {
+        return 'closed';
+    }
 };
 
 const determineVentPositionPayload = (
