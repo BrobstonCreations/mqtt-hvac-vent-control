@@ -12,7 +12,7 @@ describe('houseService', () => {
                 [modeStateTopic]: modeNightPayload,
             };
 
-            const mode = isMode(modeNightPayload, modeStateTopic, messages);
+            const mode = isMode(messages, modeNightPayload, modeStateTopic);
 
             expect(mode).toBe(true);
         });
@@ -24,7 +24,7 @@ describe('houseService', () => {
                 [modeStateTopic]: modeDayPayload,
             };
 
-            const mode = isMode(modeDayPayload, modeStateTopic, messages);
+            const mode = isMode(messages, modeDayPayload, modeStateTopic);
 
             expect(mode).toBe(true);
         });
@@ -37,7 +37,7 @@ describe('houseService', () => {
                 [modeStateTopic]: modeDayPayload,
             };
 
-            const mode = isMode(modeNightPayload, modeStateTopic, messages);
+            const mode = isMode(messages, modeNightPayload, modeStateTopic);
 
             expect(mode).toBe(false);
         });
@@ -50,7 +50,17 @@ describe('houseService', () => {
                 [modeStateTopic]: modeNightPayload,
             };
 
-            const mode = isMode(modeDayPayload, modeStateTopic, messages);
+            const mode = isMode(messages, modeDayPayload, modeStateTopic);
+
+            expect(mode).toBe(false);
+        });
+
+        it('modeStateTopic is NOT set', () => {
+            const modeNightPayload = 'night';
+            const modeStateTopic = undefined;
+            const messages = {};
+
+            const mode = isMode(messages, modeNightPayload, modeStateTopic);
 
             expect(mode).toBe(false);
         });

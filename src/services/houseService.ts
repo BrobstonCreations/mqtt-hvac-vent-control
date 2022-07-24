@@ -1,5 +1,5 @@
 export const isMode = (
-    modePayload: string,
-    modeStateTopic: string,
-    messages: {[key: string]: string},
-): boolean => messages[modeStateTopic] === modePayload;
+    messages: { [p: string]: string },
+    modePayload?: string,
+    modeStateTopic?: string,
+): boolean => !!(modeStateTopic && messages[modeStateTopic] === modePayload);
