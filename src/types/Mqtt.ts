@@ -1,10 +1,14 @@
 export interface House {
     rooms: Room[];
     thermostat: Thermostat;
+    modeDayPayload?: string;
+    modeNightPayload?: string;
+    modeStateTopic?: string;
 }
 
 export interface Room {
     actualTemperatureStateTopic: string;
+    isBedroom?: boolean;
     name: string;
     modeCommandTopic: string;
     targetTemperatureStateTopic: string;
