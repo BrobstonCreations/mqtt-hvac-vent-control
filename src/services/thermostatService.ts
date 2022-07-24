@@ -1,14 +1,14 @@
 import {AsyncMqttClient} from 'async-mqtt';
-import {SYSTEM_NAME} from '../constants/system';
 import {House, Thermostat} from '../types/Mqtt';
 import {allRoomsAreAtDesiredTemperature} from './roomService';
+import {isActive} from './systemService';
 
 export const adjustThermostat = async (
     house: House,
     messages: {[key: string]: string},
     client: AsyncMqttClient,
 ): Promise<void> => {
-    if (messages[`cmd/${SYSTEM_NAME}/pause`] !== 'true') {
+    if (isActive(messages)) {
         const {thermostat}: House = house;
         const thermostatAction = messages[thermostat.actionStateTopic];
         if (thermostatAction === thermostat.idleActionPayload) {

@@ -311,7 +311,7 @@ describe('index', () => {
     });
 
     it('should not adjust vents or thermostat if system is off', async () => {
-        await client.subscribe(`stat/${SYSTEM_NAME}/pause`);
+        await client.subscribe(`stat/${SYSTEM_NAME}/active`);
 
         await start({
             house,
@@ -319,8 +319,8 @@ describe('index', () => {
             mqttConnection,
         });
 
-        await client.publish(`cmd/${SYSTEM_NAME}/pause`, 'true');
-        const actualPayload = await onMessageAsync(`stat/${SYSTEM_NAME}/pause`, client);
+        await client.publish(`cmd/${SYSTEM_NAME}/active`, 'true');
+        const actualPayload = await onMessageAsync(`stat/${SYSTEM_NAME}/active`, client);
         expect(actualPayload).toBe('true');
     });
 

@@ -32,7 +32,7 @@ export const start = async (
     }
     const allTopics = [
         ...getAllStateTopicsFromObject(house),
-        `cmd/${SYSTEM_NAME}/pause`,
+        `cmd/${SYSTEM_NAME}/active`,
     ];
     await client.subscribe(allTopics);
     client.on('message', async (topic: string, payloadBuffer: Buffer)  => {

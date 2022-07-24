@@ -1,14 +1,14 @@
-import {AsyncMqttClient, IPublishPacket} from 'async-mqtt';
-import {SYSTEM_NAME} from '../constants/system';
+import {AsyncMqttClient} from 'async-mqtt';
 import {House, Room, Vent} from '../types/Mqtt';
 import {allRoomsAreAtDesiredTemperature, getAllVentsThatAreOpenWhenIdle} from './roomService';
+import {isActive} from './systemService';
 
 export const adjustVents = async (
     house: House,
     messages: {[key: string]: string},
     client: AsyncMqttClient,
 ): Promise<void> => {
-    if (messages[`cmd/${SYSTEM_NAME}/pause`] !== 'true') {
+    if (isActive(messages)) {
         if (allRoomsAreAtDesiredTemperature(house, messages)) {
             const vents = getAllVentsThatAreOpenWhenIdle(house.rooms);
             await openAllVents(vents, messages, client);
