@@ -42,3 +42,14 @@ export const getAllVents = (rooms: Room[]): Vent[] =>
         ...accumulator,
         ...room.vents,
     ], []);
+
+export const getAllVentsThatAreOpenWhenIdle = (rooms: Room[]): Vent[] =>
+    rooms.reduce((roomsAccumulator: Vent[], room: Room) => [
+        ...roomsAccumulator,
+        ...(room.vents.reduce((ventsAccumulator: Vent[], vent: Vent) =>
+            !vent.closedWhenIdle ? [
+                ...ventsAccumulator,
+                vent,
+            ] : ventsAccumulator, [])
+        ),
+    ], []);

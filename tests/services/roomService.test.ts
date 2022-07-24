@@ -1,6 +1,10 @@
 import {Chance} from 'chance';
 
-import {allRoomsAreAtDesiredTemperature, getAllVents} from '../../src/services/roomService';
+import {
+    allRoomsAreAtDesiredTemperature,
+    getAllVents,
+    getAllVentsThatAreOpenWhenIdle,
+} from '../../src/services/roomService';
 
 const chance = new Chance();
 
@@ -177,6 +181,49 @@ describe('roomService', () => {
             const vents = getAllVents(rooms);
 
             expect(vents).toEqual([vent1, vent2]);
+        });
+    });
+
+    describe('getAllVentsThatAreOpenWhenIdle', () => {
+        it('should return vents that are not closed when idle', () => {
+            const vent1 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/south/vent',
+                positionStateTopic: 'stat/south/vent',
+            };
+            const room1 = {
+                actualTemperatureStateTopic: 'stat/room1/actual_temperature',
+                modeCommandTopic: 'cmd/room1/mode',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room1/target_temperature',
+                vents: [vent1],
+            };
+            const vent2 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                closedWhenIdle: true,
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/north/vent',
+                positionStateTopic: 'stat/north/vent',
+            };
+            const room2 = {
+                actualTemperatureStateTopic: 'stat/room2/actual_temperature',
+                modeCommandTopic: 'cmd/room2/mode',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room2/target_temperature',
+                vents: [vent2],
+            };
+            const rooms = [room1, room2];
+
+            const vents = getAllVentsThatAreOpenWhenIdle(rooms);
+
+            expect(vents).toEqual([vent1]);
         });
     });
 });
