@@ -1,6 +1,6 @@
 import {AsyncMqttClient} from 'async-mqtt';
 import {House, Room, Vent} from '../types/Mqtt';
-import {allRoomsAreAtDesiredTemperature, getAllVentsThatAreOpenWhenIdle} from './roomService';
+import {allRoomsAreAtDesiredTemperature, getAllOpenWhenIdleVents} from './roomService';
 
 export const adjustVents = async (
     house: House,
@@ -8,7 +8,7 @@ export const adjustVents = async (
     client: AsyncMqttClient,
 ): Promise<void> => {
     if (allRoomsAreAtDesiredTemperature(house, messages)) {
-        const vents = getAllVentsThatAreOpenWhenIdle(house.rooms);
+        const vents = getAllOpenWhenIdleVents(house.rooms);
         await openAllVents(vents, messages, client);
     } else {
         await adjustRoomsVents(house, messages, client);

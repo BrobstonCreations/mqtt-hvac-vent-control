@@ -3,7 +3,7 @@ import {Chance} from 'chance';
 import {
     allRoomsAreAtDesiredTemperature,
     getAllVents,
-    getAllVentsThatAreOpenWhenIdle,
+    getAllOpenWhenIdleVents, getAllBedroomVents, getAllBedrooms,
 } from '../../src/services/roomService';
 
 const chance = new Chance();
@@ -184,7 +184,7 @@ describe('roomService', () => {
         });
     });
 
-    describe('getAllVentsThatAreOpenWhenIdle', () => {
+    describe('getAllOpenWhenIdleVents', () => {
         it('should return vents that are not closed when idle', () => {
             const vent1 = {
                 closePositionPayload: 'close',
@@ -221,7 +221,75 @@ describe('roomService', () => {
             };
             const rooms = [room1, room2];
 
-            const vents = getAllVentsThatAreOpenWhenIdle(rooms);
+            const vents = getAllOpenWhenIdleVents(rooms);
+
+            expect(vents).toEqual([vent1]);
+        });
+    });
+
+    describe('getAllBedrooms', () => {
+        it('should return vents that are isBedroom true', () => {
+            const room1 = {
+                actualTemperatureStateTopic: 'stat/room1/actual_temperature',
+                isBedroom: true,
+                modeCommandTopic: 'cmd/room1/mode',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room1/target_temperature',
+                vents: [],
+            };
+            const room2 = {
+                actualTemperatureStateTopic: 'stat/room2/actual_temperature',
+                modeCommandTopic: 'cmd/room2/mode',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room2/target_temperature',
+                vents: [],
+            };
+            const rooms = [room1, room2];
+
+            const vents = getAllBedrooms(rooms);
+
+            expect(vents).toEqual([room1]);
+        });
+    });
+
+    describe('getAllBedroomVents', () => {
+        it('should return vents that are isBedroom true', () => {
+            const vent1 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/south/vent',
+                positionStateTopic: 'stat/south/vent',
+            };
+            const room1 = {
+                actualTemperatureStateTopic: 'stat/room1/actual_temperature',
+                isBedroom: true,
+                modeCommandTopic: 'cmd/room1/mode',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room1/target_temperature',
+                vents: [vent1],
+            };
+            const vent2 = {
+                closePositionPayload: 'close',
+                closedStatePayload: 'closed',
+                name: chance.word(),
+                openPositionPayload: 'open',
+                openedStatePayload: 'opened',
+                positionCommandTopic: 'cmd/north/vent',
+                positionStateTopic: 'stat/north/vent',
+            };
+            const room2 = {
+                actualTemperatureStateTopic: 'stat/room2/actual_temperature',
+                modeCommandTopic: 'cmd/room2/mode',
+                name: chance.word(),
+                targetTemperatureStateTopic: 'stat/room2/target_temperature',
+                vents: [vent2],
+            };
+            const rooms = [room1, room2];
+
+            const vents = getAllBedroomVents(rooms);
 
             expect(vents).toEqual([vent1]);
         });
