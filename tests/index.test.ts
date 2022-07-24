@@ -7,7 +7,7 @@ import {closeSync, openSync, unlinkSync, writeFileSync} from 'fs';
 import {MqttConnection} from '../src/types/Mqtt';
 
 import {start, stop} from '../src';
-import {SYSTEM_NAME} from '../src/constants/system';
+import {activeSystemCommandTopic, SYSTEM_NAME} from '../src/constants/system';
 import {createServerAsync, onMessageAsync} from './utils/asyncHelper';
 
 const chance = new Chance();
@@ -319,7 +319,7 @@ describe('index', () => {
             mqttConnection,
         });
 
-        await client.publish(`cmd/${SYSTEM_NAME}/active`, 'false');
+        await client.publish(activeSystemCommandTopic, 'false');
         const actualPayload = await onMessageAsync(`stat/${SYSTEM_NAME}/active`, client);
         expect(actualPayload).toBe('false');
     });

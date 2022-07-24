@@ -1,8 +1,8 @@
 import {AsyncMqttClient} from 'async-mqtt';
-import {SYSTEM_NAME} from '../constants/system';
+import {activeSystemCommandTopic, SYSTEM_NAME} from '../constants/system';
 
 export const adjustSystem = async (topic: string, payload: string, client: AsyncMqttClient): Promise<void> => {
-    if (topic === `cmd/${SYSTEM_NAME}/active`) {
+    if (topic === activeSystemCommandTopic) {
         switch (payload) {
             case 'true':
             case 'false':
@@ -13,4 +13,4 @@ export const adjustSystem = async (topic: string, payload: string, client: Async
 
 export const isActive = (
     messages: {[key: string]: string},
-): boolean => messages[`cmd/${SYSTEM_NAME}/active`] !== 'false';
+): boolean => messages[activeSystemCommandTopic] !== 'false';

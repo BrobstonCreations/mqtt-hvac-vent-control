@@ -1,7 +1,7 @@
 import {AsyncMqttClient} from 'async-mqtt';
 import {Chance} from 'chance';
 
-import {SYSTEM_NAME} from '../../src/constants/system';
+import {activeSystemCommandTopic, SYSTEM_NAME} from '../../src/constants/system';
 import {adjustSystem, isActive} from '../../src/services/systemService';
 
 const chance = new Chance();
@@ -16,14 +16,14 @@ describe('adjustSystem', () => {
     } as AsyncMqttClient;
 
     it('should publish active state true', async () => {
-        await adjustSystem(`cmd/${SYSTEM_NAME}/active`, 'true', client);
+        await adjustSystem(activeSystemCommandTopic, 'true', client);
 
         expect(client.publish).toHaveBeenCalledTimes(1);
         expect(client.publish).toHaveBeenCalledWith(`stat/${SYSTEM_NAME}/active`, 'true');
     });
 
     it('should publish active state false', async () => {
-        await adjustSystem(`cmd/${SYSTEM_NAME}/active`, 'false', client);
+        await adjustSystem(activeSystemCommandTopic, 'false', client);
 
         expect(client.publish).toHaveBeenCalledTimes(1);
         expect(client.publish).toHaveBeenCalledWith(`stat/${SYSTEM_NAME}/active`, 'false');
@@ -39,14 +39,14 @@ describe('adjustSystem', () => {
 describe('isActive', () => {
     it('is active true', () => {
         const messages = {
-            [`cmd/${SYSTEM_NAME}/active`]: 'true',
+            [activeSystemCommandTopic]: 'true',
         };
         expect(isActive(messages)).toBe(true);
     });
 
     it('is active false', () => {
         const messages = {
-            [`cmd/${SYSTEM_NAME}/active`]: 'false',
+            [activeSystemCommandTopic]: 'false',
         };
         expect(isActive(messages)).toBe(false);
     });

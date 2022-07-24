@@ -1,6 +1,6 @@
 import {AsyncMqttClient, connect} from 'async-mqtt';
 
-import {SYSTEM_NAME} from './constants/system';
+import {activeSystemCommandTopic, SYSTEM_NAME} from './constants/system';
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
 import {adjustRooms} from './services/roomService';
@@ -32,7 +32,7 @@ export const start = async (
     }
     const allTopics = [
         ...getAllStateTopicsFromObject(house),
-        `cmd/${SYSTEM_NAME}/active`,
+        activeSystemCommandTopic,
     ];
     await client.subscribe(allTopics);
     client.on('message', async (topic: string, payloadBuffer: Buffer)  => {
