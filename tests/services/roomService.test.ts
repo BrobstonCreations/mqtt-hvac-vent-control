@@ -2,8 +2,8 @@ import {Chance} from 'chance';
 
 import {
     allRoomsAreAtDesiredTemperature,
-    getAllVents,
-    getAllOpenWhenIdleVents, getAllBedroomVents, getAllBedrooms,
+    getAllBedrooms,
+    getAllBedroomVents, getAllOpenWhenIdleVents, getAllVents,
 } from '../../src/services/roomService';
 
 const chance = new Chance();
