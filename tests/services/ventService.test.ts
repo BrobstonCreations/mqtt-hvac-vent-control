@@ -64,20 +64,6 @@ describe('ventService', () => {
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
         });
-
-        it('should do nothing if system is not active', async () => {
-            const messages = {
-                [room.actualTemperatureStateTopic]: '71',
-                [room.targetTemperatureStateTopic]: '70',
-                [thermostat.modeStateTopic]: thermostat.coolModePayload,
-                [vent.positionStateTopic]: vent.closedStatePayload,
-                [`cmd/${SYSTEM_NAME}/active`]: 'false',
-            };
-
-            await adjustVents(house, messages, client);
-
-            expect(client.publish).not.toHaveBeenCalled();
-        });
     });
 
     describe('adjustRoomsVents', () => {

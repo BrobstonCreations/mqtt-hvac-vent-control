@@ -108,21 +108,6 @@ describe('thermostatService', () => {
 
             expect(client.publish).not.toHaveBeenCalled();
         });
-
-        it('should do nothing if system is not active', async () => {
-            const messages = {
-                [thermostat.actualTemperatureStateTopic]: '71',
-                [thermostat.modeStateTopic]: thermostat.coolModePayload,
-                [thermostat.actionStateTopic]: thermostat.idleActionPayload,
-                [room.actualTemperatureStateTopic]: '75',
-                [room.targetTemperatureStateTopic]: '74',
-                [`cmd/${SYSTEM_NAME}/active`]: 'false',
-            };
-
-            await adjustThermostat(house, messages, client);
-
-            expect(client.publish).not.toHaveBeenCalled();
-        });
     });
 
     describe('determineDifference', () => {

@@ -310,7 +310,7 @@ describe('index', () => {
         expect(actualPayload).toEqual(expectedThermostatTemperaturePayload.toString());
     });
 
-    it('should not adjust vents or thermostat if system is off', async () => {
+    it('should not adjust vents or thermostat if system is not active', async () => {
         await client.subscribe(`stat/${SYSTEM_NAME}/active`);
 
         await start({
@@ -319,9 +319,9 @@ describe('index', () => {
             mqttConnection,
         });
 
-        await client.publish(`cmd/${SYSTEM_NAME}/active`, 'true');
+        await client.publish(`cmd/${SYSTEM_NAME}/active`, 'false');
         const actualPayload = await onMessageAsync(`stat/${SYSTEM_NAME}/active`, client);
-        expect(actualPayload).toBe('true');
+        expect(actualPayload).toBe('false');
     });
 
     it('should invoke logging', async () => {

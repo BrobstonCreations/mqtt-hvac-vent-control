@@ -4,7 +4,7 @@ import {SYSTEM_NAME} from './constants/system';
 import {setupLogging} from './services/logService';
 import {getOptionsFromEnvironmentOrFile} from './services/optionService';
 import {adjustRooms} from './services/roomService';
-import {adjustSystem} from './services/systemService';
+import {adjustSystem, isActive} from './services/systemService';
 import {adjustThermostat} from './services/thermostatService';
 import {getAllStateTopicsFromObject} from './services/topicService';
 import {adjustVents} from './services/ventService';
@@ -41,9 +41,11 @@ export const start = async (
         if (log) {
             console.log(JSON.stringify(messages, null, 2));
         }
-        await adjustVents(house, messages, client);
-        await adjustRooms(house, messages, client);
-        await adjustThermostat(house, messages, client);
+        if (isActive(messages)) {
+            await adjustVents(house, messages, client);
+            await adjustRooms(house, messages, client);
+            await adjustThermostat(house, messages, client);
+        }
         await adjustSystem(topic, payload, client);
     });
 };
