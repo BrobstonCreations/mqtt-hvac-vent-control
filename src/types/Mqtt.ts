@@ -1,8 +1,8 @@
 export interface House {
     rooms: Room[];
     thermostat: Thermostat;
-    modeDayPayload?: string;
-    modeNightPayload?: string;
+    modeDaytimePayload?: string;
+    modeNighttimePayload?: string;
     modeStateTopic?: string;
 }
 

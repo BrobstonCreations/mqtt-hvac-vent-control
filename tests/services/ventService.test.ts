@@ -59,14 +59,14 @@ describe('ventService', () => {
     describe('adjustVents', () => {
         it('should close vent if is night and room NOT isNighttimeRoom', async () => {
             const modeStateTopic = 'stat/house/mode';
-            const modeNightPayload = 'night';
+            const modeNighttimePayload = 'night';
             const houseInNightMode = {
                 ...house,
-                modeNightPayload,
+                modeNighttimePayload,
                 modeStateTopic,
             };
             const messages = {
-                [modeStateTopic]: modeNightPayload,
+                [modeStateTopic]: modeNighttimePayload,
             };
 
             await adjustVents(houseInNightMode, messages, client);

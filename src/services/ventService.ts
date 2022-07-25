@@ -8,7 +8,7 @@ export const adjustVents = async (
     messages: {[key: string]: string},
     client: AsyncMqttClient,
 ): Promise<void> => {
-    if (isMode(messages, house.modeNightPayload, house.modeStateTopic)) {
+    if (isMode(messages, house.modeNighttimePayload, house.modeStateTopic)) {
         await adjustVentsToNighttimeState(house.rooms, messages, client);
     } else if (allRoomsAreAtDesiredTemperature(house, messages)) {
         await adjustVentsToIdleState(house.rooms, messages, client);
