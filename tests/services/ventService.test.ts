@@ -6,7 +6,7 @@ import {
     adjustVentsByTemperature,
     adjustVentsToIdleState,
     getVentPositionPayload,
-    openAllVents
+    openAllVents,
 } from '../../src/services/ventService';
 
 const chance = new Chance();
