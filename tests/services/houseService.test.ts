@@ -1,7 +1,4 @@
-import {Chance} from 'chance';
 import {isMode} from '../../src/services/houseService';
-
-const chance = new Chance();
 
 describe('houseService', () => {
     describe('isMode', () => {

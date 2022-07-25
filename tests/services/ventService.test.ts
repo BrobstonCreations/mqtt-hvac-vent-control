@@ -4,7 +4,8 @@ import {AsyncMqttClient} from 'async-mqtt';
 import {
     adjustVents,
     adjustVentsByTemperature,
-    adjustVentsToIdleState, adjustVentsToNighttimeState,
+    adjustVentsToIdleState,
+    adjustVentsToNighttimeState,
     getVentPositionPayload,
     openAllVents,
 } from '../../src/services/ventService';
@@ -56,6 +57,24 @@ describe('ventService', () => {
     });
 
     describe('adjustVents', () => {
+        it('should close vent if is night and room NOT isNighttimeRoom', async () => {
+            const modeStateTopic = 'stat/house/mode';
+            const modeNightPayload = 'night';
+            const houseInNightMode = {
+                ...house,
+                modeNightPayload,
+                modeStateTopic,
+            };
+            const messages = {
+                [modeStateTopic]: modeNightPayload,
+            };
+
+            await adjustVents(houseInNightMode, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
+        });
+
         it('should open all vents if rooms are at desired temps', async () => {
             const messages = {
                 [room.actualTemperatureStateTopic]: '70',
