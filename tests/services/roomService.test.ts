@@ -2,8 +2,10 @@ import {Chance} from 'chance';
 
 import {
     allRoomsAreAtDesiredTemperature,
-    getAllBedrooms,
-    getAllBedroomVents, getAllOpenWhenIdleVents, getAllVents,
+    getAllNighttimeRooms,
+    getAllNighttimeVents,
+    getAllOpenWhenIdleVents,
+    getAllVents,
 } from '../../src/services/roomService';
 
 const chance = new Chance();
@@ -227,11 +229,11 @@ describe('roomService', () => {
         });
     });
 
-    describe('getAllBedrooms', () => {
+    describe('getAllNighttimeRooms', () => {
         it('should return vents that are isBedroom true', () => {
             const room1 = {
                 actualTemperatureStateTopic: 'stat/room1/actual_temperature',
-                isBedroom: true,
+                isNighttimeRoom: true,
                 modeCommandTopic: 'cmd/room1/mode',
                 name: chance.word(),
                 targetTemperatureStateTopic: 'stat/room1/target_temperature',
@@ -244,15 +246,14 @@ describe('roomService', () => {
                 targetTemperatureStateTopic: 'stat/room2/target_temperature',
                 vents: [],
             };
-            const rooms = [room1, room2];
 
-            const vents = getAllBedrooms(rooms);
+            const rooms = getAllNighttimeRooms([room1, room2]);
 
-            expect(vents).toEqual([room1]);
+            expect(rooms).toEqual([room1]);
         });
     });
 
-    describe('getAllBedroomVents', () => {
+    describe('getAllNighttimeVents', () => {
         it('should return vents that are isBedroom true', () => {
             const vent1 = {
                 closePositionPayload: 'close',
@@ -265,7 +266,7 @@ describe('roomService', () => {
             };
             const room1 = {
                 actualTemperatureStateTopic: 'stat/room1/actual_temperature',
-                isBedroom: true,
+                isNighttimeRoom: true,
                 modeCommandTopic: 'cmd/room1/mode',
                 name: chance.word(),
                 targetTemperatureStateTopic: 'stat/room1/target_temperature',
@@ -289,7 +290,7 @@ describe('roomService', () => {
             };
             const rooms = [room1, room2];
 
-            const vents = getAllBedroomVents(rooms);
+            const vents = getAllNighttimeVents(rooms);
 
             expect(vents).toEqual([vent1]);
         });

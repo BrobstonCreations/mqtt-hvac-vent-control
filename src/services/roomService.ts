@@ -54,14 +54,14 @@ export const getAllOpenWhenIdleVents = (rooms: Room[]): Vent[] =>
         ),
     ], []);
 
-export const getAllBedroomVents = (rooms: Room[]): Vent[] => {
-    const bedrooms = getAllBedrooms(rooms);
+export const getAllNighttimeVents = (rooms: Room[]): Vent[] => {
+    const bedrooms = getAllNighttimeRooms(rooms);
     return getAllVents(bedrooms);
 };
 
-export const getAllBedrooms = (rooms: Room[]): Room[] =>
+export const getAllNighttimeRooms = (rooms: Room[]): Room[] =>
     rooms.reduce((accumulator: Room[], room: Room): Room[] =>
-        room.isBedroom ? [
+        room.isNighttimeRoom ? [
             ...accumulator,
             room,
         ] : accumulator, []);

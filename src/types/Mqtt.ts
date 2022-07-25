@@ -8,7 +8,7 @@ export interface House {
 
 export interface Room {
     actualTemperatureStateTopic: string;
-    isBedroom?: boolean;
+    isNighttimeRoom?: boolean;
     name: string;
     modeCommandTopic: string;
     targetTemperatureStateTopic: string;
