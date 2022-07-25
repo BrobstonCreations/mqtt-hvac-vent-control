@@ -56,12 +56,12 @@ describe('roomService', () => {
         it('should return true if cooling and room actual temperatures are below target temperature', () => {
             const messages = {
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
-                [room1.actualTemperatureStateTopic]: 70,
-                [room1.targetTemperatureStateTopic]: 71,
-                [room2.actualTemperatureStateTopic]: 72,
-                [room2.targetTemperatureStateTopic]: 73,
-                [room3.actualTemperatureStateTopic]: 74,
-                [room3.targetTemperatureStateTopic]: 75,
+                [room1.actualTemperatureStateTopic]: '70',
+                [room1.targetTemperatureStateTopic]: '71',
+                [room2.actualTemperatureStateTopic]: '72',
+                [room2.targetTemperatureStateTopic]: '73',
+                [room3.actualTemperatureStateTopic]: '74',
+                [room3.targetTemperatureStateTopic]: '75',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -70,12 +70,12 @@ describe('roomService', () => {
         it('should return true if cooling and room actual temperatures is equal to target temperature', () => {
             const messages = {
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
-                [room1.actualTemperatureStateTopic]: 70,
-                [room1.targetTemperatureStateTopic]: 70,
-                [room2.actualTemperatureStateTopic]: 71,
-                [room2.targetTemperatureStateTopic]: 71,
-                [room3.actualTemperatureStateTopic]: 72,
-                [room3.targetTemperatureStateTopic]: 72,
+                [room1.actualTemperatureStateTopic]: '70',
+                [room1.targetTemperatureStateTopic]: '70',
+                [room2.actualTemperatureStateTopic]: '71',
+                [room2.targetTemperatureStateTopic]: '71',
+                [room3.actualTemperatureStateTopic]: '72',
+                [room3.targetTemperatureStateTopic]: '72',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -84,12 +84,12 @@ describe('roomService', () => {
         it('should return false if cooling and one actual temperature is above target temperature', () => {
             const messages = {
                 [thermostat.modeStateTopic]: thermostat.coolModePayload,
-                [room1.actualTemperatureStateTopic]: 71,
-                [room1.targetTemperatureStateTopic]: 70,
-                [room2.actualTemperatureStateTopic]: 72,
-                [room2.targetTemperatureStateTopic]: 73,
-                [room3.actualTemperatureStateTopic]: 74,
-                [room3.targetTemperatureStateTopic]: 75,
+                [room1.actualTemperatureStateTopic]: '71',
+                [room1.targetTemperatureStateTopic]: '70',
+                [room2.actualTemperatureStateTopic]: '72',
+                [room2.targetTemperatureStateTopic]: '73',
+                [room3.actualTemperatureStateTopic]: '74',
+                [room3.targetTemperatureStateTopic]: '75',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(false);
@@ -98,12 +98,12 @@ describe('roomService', () => {
         it('should return true if heating and room actual temperatures are above target temperature', () => {
             const messages = {
                 [thermostat.modeStateTopic]: thermostat.heatModePayload,
-                [room1.actualTemperatureStateTopic]: 71,
-                [room1.targetTemperatureStateTopic]: 70,
-                [room2.actualTemperatureStateTopic]: 73,
-                [room2.targetTemperatureStateTopic]: 72,
-                [room3.actualTemperatureStateTopic]: 75,
-                [room3.targetTemperatureStateTopic]: 74,
+                [room1.actualTemperatureStateTopic]: '71',
+                [room1.targetTemperatureStateTopic]: '70',
+                [room2.actualTemperatureStateTopic]: '73',
+                [room2.targetTemperatureStateTopic]: '72',
+                [room3.actualTemperatureStateTopic]: '75',
+                [room3.targetTemperatureStateTopic]: '74',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -112,12 +112,12 @@ describe('roomService', () => {
         it('should return true if heating and room actual temperatures is equal to target temperature', () => {
             const messages = {
                 [thermostat.modeStateTopic]: thermostat.heatModePayload,
-                [room1.actualTemperatureStateTopic]: 70,
-                [room1.targetTemperatureStateTopic]: 70,
-                [room2.actualTemperatureStateTopic]: 71,
-                [room2.targetTemperatureStateTopic]: 71,
-                [room3.actualTemperatureStateTopic]: 72,
-                [room3.targetTemperatureStateTopic]: 72,
+                [room1.actualTemperatureStateTopic]: '70',
+                [room1.targetTemperatureStateTopic]: '70',
+                [room2.actualTemperatureStateTopic]: '71',
+                [room2.targetTemperatureStateTopic]: '71',
+                [room3.actualTemperatureStateTopic]: '72',
+                [room3.targetTemperatureStateTopic]: '72',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -126,12 +126,12 @@ describe('roomService', () => {
         it('should return false if cooling and one actual temperature is above target temperature', () => {
             const messages = {
                 [thermostat.modeStateTopic]: thermostat.heatModePayload,
-                [room1.actualTemperatureStateTopic]: 70,
-                [room1.targetTemperatureStateTopic]: 71,
-                [room2.actualTemperatureStateTopic]: 73,
-                [room2.targetTemperatureStateTopic]: 72,
-                [room3.actualTemperatureStateTopic]: 75,
-                [room3.targetTemperatureStateTopic]: 74,
+                [room1.actualTemperatureStateTopic]: '70',
+                [room1.targetTemperatureStateTopic]: '71',
+                [room2.actualTemperatureStateTopic]: '73',
+                [room2.targetTemperatureStateTopic]: '72',
+                [room3.actualTemperatureStateTopic]: '75',
+                [room3.targetTemperatureStateTopic]: '74',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(false);
