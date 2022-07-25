@@ -7,14 +7,11 @@ export const adjustThermostat = async (
     messages: {[key: string]: string},
     client: AsyncMqttClient,
 ): Promise<void> => {
-    const {thermostat}: House = house;
-    const thermostatAction = messages[thermostat.actionStateTopic];
-    if (thermostatAction === thermostat.idleActionPayload) {
-        !allRoomsAreAtDesiredTemperature(house, messages)
-        && await publishThermostatAdjustment('on', thermostat, messages, client);
-    } else {
-        allRoomsAreAtDesiredTemperature(house, messages)
-        && await publishThermostatAdjustment('off', thermostat, messages, client);
+    const desiredState = determineDesiredState(house, messages);
+    const difference = determineDifference(desiredState, house.thermostat, messages);
+    if (difference !== 0) {
+        const targetTemperature = Number(messages[house.thermostat.actualTemperatureStateTopic]) + difference;
+        await client.publish(house.thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
     }
 };
 
@@ -34,13 +31,17 @@ export const determineDifference = (
     return 0;
 };
 
-const publishThermostatAdjustment = async (
-    desiredState: string,
-    thermostat: Thermostat,
+const determineDesiredState = (
+    house: House,
     messages: {[key: string]: string},
-    client: AsyncMqttClient,
-): Promise<void> => {
-    const difference = determineDifference(desiredState, thermostat, messages);
-    const targetTemperature = Number(messages[thermostat.actualTemperatureStateTopic]) + difference;
-    await client.publish(thermostat.targetTemperatureCommandTopic, targetTemperature.toString());
+): string => {
+    const {thermostat: {actionStateTopic, idleActionPayload}}: House = house;
+    const thermostatAction = messages[actionStateTopic];
+    const thermostatIsIdle = thermostatAction === idleActionPayload;
+    if (thermostatIsIdle && !allRoomsAreAtDesiredTemperature(house, messages)) {
+        return 'on';
+    } else if (!thermostatIsIdle && allRoomsAreAtDesiredTemperature(house, messages)) {
+        return 'off';
+    }
+    return 'idle';
 };
