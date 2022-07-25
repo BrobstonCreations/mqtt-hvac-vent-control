@@ -11,7 +11,7 @@ export const adjustVents = async (
         const vents = getAllOpenWhenIdleVents(house.rooms);
         await openAllVents(vents, messages, client);
     } else {
-        await adjustRoomsVents(house, messages, client);
+        await adjustVentsByTemperature(house, messages, client);
     }
 };
 
@@ -23,7 +23,7 @@ export const openAllVents = async (
     await Promise.all(vents.map((vent: Vent) => client.publish(vent.positionCommandTopic, vent.openPositionPayload)));
 };
 
-export const adjustRoomsVents = async (
+export const adjustVentsByTemperature = async (
     house: House,
     messages: {[key: string]: string},
     client: AsyncMqttClient,

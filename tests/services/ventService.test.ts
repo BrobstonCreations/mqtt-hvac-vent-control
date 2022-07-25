@@ -2,7 +2,7 @@ import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
 import {SYSTEM_NAME} from '../../src/constants/system';
-import {adjustRoomsVents, adjustVents, getVentPositionPayload, openAllVents} from '../../src/services/ventService';
+import {adjustVentsByTemperature, adjustVents, getVentPositionPayload, openAllVents} from '../../src/services/ventService';
 
 const chance = new Chance();
 
@@ -66,7 +66,7 @@ describe('ventService', () => {
         });
     });
 
-    describe('adjustRoomsVents', () => {
+    describe('adjustVentsByTemperature', () => {
         it('should open vent when actual temp is above target and thermostat is cool mode', async () => {
             const messages = {
                 [room.actualTemperatureStateTopic]: '71',
@@ -75,7 +75,7 @@ describe('ventService', () => {
                 [vent.positionStateTopic]: vent.closedStatePayload,
             };
 
-            await adjustRoomsVents(house, messages, client);
+            await adjustVentsByTemperature(house, messages, client);
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
@@ -89,7 +89,7 @@ describe('ventService', () => {
                 [vent.positionStateTopic]: vent.closedStatePayload,
             };
 
-            await adjustRoomsVents(house, messages, client);
+            await adjustVentsByTemperature(house, messages, client);
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
@@ -103,7 +103,7 @@ describe('ventService', () => {
                 [vent.positionStateTopic]: vent.openedStatePayload,
             };
 
-            await adjustRoomsVents(house, messages, client);
+            await adjustVentsByTemperature(house, messages, client);
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
@@ -117,7 +117,7 @@ describe('ventService', () => {
                 [vent.positionStateTopic]: vent.openedStatePayload,
             };
 
-            await adjustRoomsVents(house, messages, client);
+            await adjustVentsByTemperature(house, messages, client);
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
@@ -130,7 +130,7 @@ describe('ventService', () => {
                 [vent.positionStateTopic]: vent.openedStatePayload,
             };
 
-            await adjustRoomsVents(house, messages, client);
+            await adjustVentsByTemperature(house, messages, client);
 
             expect(client.publish).not.toHaveBeenCalled();
         });
@@ -143,7 +143,7 @@ describe('ventService', () => {
                 [vent.positionStateTopic]: vent.openedStatePayload,
             };
 
-            await adjustRoomsVents(house, messages, client);
+            await adjustVentsByTemperature(house, messages, client);
 
             expect(client.publish).not.toHaveBeenCalled();
         });
