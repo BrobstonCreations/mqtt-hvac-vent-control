@@ -26,14 +26,7 @@ describe('roomService', () => {
             targetTemperatureStateTopic: chance.string(),
             vents: [],
         };
-        const room3 = {
-            actualTemperatureStateTopic: chance.string(),
-            modeCommandTopic: chance.string(),
-            name: chance.string(),
-            targetTemperatureStateTopic: chance.string(),
-            vents: [],
-        };
-        const rooms = [room1, room2, room3];
+        const rooms = [room1, room2];
         const thermostat = {
             actionStateTopic: 'stat/ecobee/action',
             actualTemperatureStateTopic: 'stat/ecobee/actual_temperature',
@@ -60,8 +53,6 @@ describe('roomService', () => {
                 [room1.targetTemperatureStateTopic]: '71',
                 [room2.actualTemperatureStateTopic]: '72',
                 [room2.targetTemperatureStateTopic]: '73',
-                [room3.actualTemperatureStateTopic]: '74',
-                [room3.targetTemperatureStateTopic]: '75',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -74,8 +65,6 @@ describe('roomService', () => {
                 [room1.targetTemperatureStateTopic]: '70',
                 [room2.actualTemperatureStateTopic]: '71',
                 [room2.targetTemperatureStateTopic]: '71',
-                [room3.actualTemperatureStateTopic]: '72',
-                [room3.targetTemperatureStateTopic]: '72',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -88,8 +77,6 @@ describe('roomService', () => {
                 [room1.targetTemperatureStateTopic]: '70',
                 [room2.actualTemperatureStateTopic]: '72',
                 [room2.targetTemperatureStateTopic]: '73',
-                [room3.actualTemperatureStateTopic]: '74',
-                [room3.targetTemperatureStateTopic]: '75',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(false);
@@ -102,8 +89,6 @@ describe('roomService', () => {
                 [room1.targetTemperatureStateTopic]: '70',
                 [room2.actualTemperatureStateTopic]: '73',
                 [room2.targetTemperatureStateTopic]: '72',
-                [room3.actualTemperatureStateTopic]: '75',
-                [room3.targetTemperatureStateTopic]: '74',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -116,8 +101,6 @@ describe('roomService', () => {
                 [room1.targetTemperatureStateTopic]: '70',
                 [room2.actualTemperatureStateTopic]: '71',
                 [room2.targetTemperatureStateTopic]: '71',
-                [room3.actualTemperatureStateTopic]: '72',
-                [room3.targetTemperatureStateTopic]: '72',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(true);
@@ -130,8 +113,6 @@ describe('roomService', () => {
                 [room1.targetTemperatureStateTopic]: '71',
                 [room2.actualTemperatureStateTopic]: '73',
                 [room2.targetTemperatureStateTopic]: '72',
-                [room3.actualTemperatureStateTopic]: '75',
-                [room3.targetTemperatureStateTopic]: '74',
             };
 
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(false);
