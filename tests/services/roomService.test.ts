@@ -1,6 +1,8 @@
+import {AsyncMqttClient} from 'async-mqtt';
 import {Chance} from 'chance';
 
 import {
+    adjustRooms,
     allRoomsAreAtDesiredTemperature,
     getAllNighttimeRooms,
     getAllNighttimeVents,
@@ -10,7 +12,122 @@ import {
 
 const chance = new Chance();
 
+afterEach(() => {
+    jest.clearAllMocks();
+});
+
 describe('roomService', () => {
+    const client = {
+        publish: jest.fn(() => Promise.resolve()) as any,
+    } as AsyncMqttClient;
+
+    describe('adjustRooms', () => {
+        const room = {
+            actualTemperatureStateTopic: chance.string(),
+            modeCommandTopic: chance.string(),
+            name: chance.string(),
+            targetTemperatureStateTopic: chance.string(),
+            vents: [],
+        };
+        const thermostat = {
+            actionStateTopic: 'stat/ecobee/action',
+            actualTemperatureStateTopic: 'stat/ecobee/actual_temperature',
+            coolModePayload: 'cool',
+            coolingActionPayload: 'cooling',
+            heatModePayload: 'heat',
+            heatingActionPayload: 'heating',
+            idleActionPayload: 'idle',
+            modeStateTopic: 'stat/ecobee/mode',
+            name: chance.word(),
+            offModePayload: 'off',
+            targetTemperatureCommandTopic: 'cmd/ecobee/temperature',
+            targetTemperatureStateTopic: 'stat/ecobee/target_temperature',
+        };
+        const house = {
+            rooms: [room],
+            thermostat,
+        };
+
+        it('should command room cool if thermostat cool, is nighttime, and is nighttime room', async () => {
+            const modeStateTopic = 'stat/house/mode';
+            const modeNighttimePayload = 'night';
+            const messages = {
+                [modeStateTopic]: modeNighttimePayload,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [room.targetTemperatureStateTopic]: '70',
+                [room.actualTemperatureStateTopic]: '71',
+            };
+            const houseInNightMode = {
+                ...house,
+                modeNighttimePayload,
+                modeStateTopic,
+                rooms: [{
+                    ...room,
+                    isNighttimeRoom: true,
+                }],
+            };
+
+            await adjustRooms(houseInNightMode, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(room.modeCommandTopic, 'cool');
+        });
+
+        it('should command room heat if thermostat heat, is nighttime, and is nighttime room', async () => {
+            const modeStateTopic = 'stat/house/mode';
+            const modeNighttimePayload = 'night';
+            const messages = {
+                [modeStateTopic]: modeNighttimePayload,
+                [thermostat.modeStateTopic]: thermostat.heatModePayload,
+                [room.targetTemperatureStateTopic]: '71',
+                [room.actualTemperatureStateTopic]: '70',
+            };
+            const houseInNightMode = {
+                ...house,
+                modeNighttimePayload,
+                modeStateTopic,
+                rooms: [{
+                    ...room,
+                    isNighttimeRoom: true,
+                }],
+            };
+
+            await adjustRooms(houseInNightMode, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(room.modeCommandTopic, 'heat');
+        });
+
+        it('should command room off if is nighttime and is NOT nighttime room', async () => {
+            const modeStateTopic = 'stat/house/mode';
+            const modeNighttimePayload = 'night';
+            const messages = {
+                [modeStateTopic]: modeNighttimePayload,
+                [room.targetTemperatureStateTopic]: '70',
+                [room.actualTemperatureStateTopic]: '71',
+            };
+            const houseInNightMode = {
+                ...house,
+                modeNighttimePayload,
+                modeStateTopic,
+            };
+
+            await adjustRooms(houseInNightMode, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(room.modeCommandTopic, 'off');
+        });
+
+        it('should command room off if missing target or actual temperature', async () => {
+            const messages = {};
+
+            await adjustRooms(house, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(room.modeCommandTopic, 'off');
+        });
+    });
+
     describe('allRoomsAreAtDesiredTemperature', () => {
         const room1 = {
             actualTemperatureStateTopic: chance.string(),

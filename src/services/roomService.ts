@@ -4,22 +4,26 @@ import {House, Room, Vent} from '../types/Mqtt';
 import {isMode} from './houseService';
 
 export const adjustRooms = async (
-    {thermostat: {modeStateTopic, heatModePayload, coolModePayload}, rooms}: House,
+    house: House,
     messages: {[key: string]: string},
     client: AsyncMqttClient,
 ): Promise<void> => {
-    await Promise.all(rooms.map((room: Room) => {
+    await Promise.all(house.rooms.map((room: Room) => {
+        const {thermostat: {heatModePayload, coolModePayload}}: House = house;
         const roomActualTemperature = messages[room.actualTemperatureStateTopic];
         const roomTargetTemperature = messages[room.targetTemperatureStateTopic];
+        if (isMode(messages, house.modeNighttimePayload, house.modeStateTopic) && !room.isNighttimeRoom) {
+            return client.publish(room.modeCommandTopic, 'off');
+        }
         if (roomActualTemperature && roomTargetTemperature) {
-            const thermostatMode = messages[modeStateTopic];
+            const thermostatMode = messages[house.thermostat.modeStateTopic];
             if (thermostatMode === heatModePayload && roomActualTemperature < roomTargetTemperature) {
                 return client.publish(room.modeCommandTopic, 'heat');
             } else if (thermostatMode === coolModePayload && roomTargetTemperature < roomActualTemperature) {
                 return client.publish(room.modeCommandTopic, 'cool');
             }
-            return client.publish(room.modeCommandTopic, 'off');
         }
+        return client.publish(room.modeCommandTopic, 'off');
     }));
 };
 
