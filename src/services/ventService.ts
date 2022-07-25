@@ -15,6 +15,25 @@ export const adjustVents = async (
     }
 };
 
+export const adjustVentsToIdleState = async (
+  rooms: Room[],
+  messages: {[key: string]: string},
+  client: AsyncMqttClient,
+): Promise<void> => {
+    await Promise.all(
+        rooms.map(({vents}: Room) => {
+            vents.map(({
+                closedWhenIdle,
+                closePositionPayload,
+                openPositionPayload,
+                positionCommandTopic,
+            }: Vent) =>
+                client.publish(positionCommandTopic,
+                    closedWhenIdle ? closePositionPayload : openPositionPayload));
+        }),
+    );
+};
+
 export const openAllVents = async (
     vents: Vent[],
     messages: {[key: string]: string},

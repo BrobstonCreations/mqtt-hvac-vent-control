@@ -1,8 +1,13 @@
 import {Chance} from 'chance';
 
 import {AsyncMqttClient} from 'async-mqtt';
-import {SYSTEM_NAME} from '../../src/constants/system';
-import {adjustVentsByTemperature, adjustVents, getVentPositionPayload, openAllVents} from '../../src/services/ventService';
+import {
+    adjustVents,
+    adjustVentsByTemperature,
+    adjustVentsToIdleState,
+    getVentPositionPayload,
+    openAllVents
+} from '../../src/services/ventService';
 
 const chance = new Chance();
 
@@ -63,6 +68,56 @@ describe('ventService', () => {
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+    });
+
+    describe('adjustVentsToIdleState', () => {
+        it('should open vent because closedWhenIdle is false', async () => {
+            const rooms = [{
+                ...room,
+                vents: [{
+                    ...vent,
+                    closedWhenIdle: false,
+                }],
+            }];
+            const messages = {};
+
+            await adjustVentsToIdleState(rooms, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should open vent because closedWhenIdle NOT set', async () => {
+            const rooms = [{
+                ...room,
+                vents: [{
+                    ...vent,
+                    closedWhenIdle: undefined,
+                }],
+            }];
+            const messages = {};
+
+            await adjustVentsToIdleState(rooms, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should close vent because closedWhenIdle is true', async () => {
+            const rooms = [{
+                ...room,
+                vents: [{
+                    ...vent,
+                    closedWhenIdle: true,
+                }],
+            }];
+            const messages = {};
+
+            await adjustVentsToIdleState(rooms, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
         });
     });
 
