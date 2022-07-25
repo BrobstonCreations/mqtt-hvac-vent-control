@@ -14,6 +14,18 @@ export const adjustVents = async (
     }
 };
 
+export const adjustVentsToNighttimeState = async (
+    rooms: Room[],
+    messages: {[key: string]: string},
+    client: AsyncMqttClient,
+): Promise<void> => {
+    await Promise.all(
+        rooms.map(({isNighttimeRoom, vents}: Room) =>
+            vents.map(({positionCommandTopic, openPositionPayload, closePositionPayload}: Vent) =>
+                client.publish(positionCommandTopic,
+                    isNighttimeRoom ? openPositionPayload : closePositionPayload))).flat());
+};
+
 export const adjustVentsToIdleState = async (
   rooms: Room[],
   messages: {[key: string]: string},

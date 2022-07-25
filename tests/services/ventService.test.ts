@@ -4,7 +4,7 @@ import {AsyncMqttClient} from 'async-mqtt';
 import {
     adjustVents,
     adjustVentsByTemperature,
-    adjustVentsToIdleState,
+    adjustVentsToIdleState, adjustVentsToNighttimeState,
     getVentPositionPayload,
     openAllVents,
 } from '../../src/services/ventService';
@@ -68,6 +68,34 @@ describe('ventService', () => {
 
             expect(client.publish).toHaveBeenCalledTimes(1);
             expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+    });
+
+    describe('adjustVentsToNighttimeState', () => {
+        it('should open vent because isNighttimeRoom is true', async () => {
+            const rooms = [{
+                ...room,
+                isNighttimeRoom: true,
+            }];
+            const messages = {};
+
+            await adjustVentsToNighttimeState(rooms, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.openPositionPayload);
+        });
+
+        it('should close vent because isNighttimeRoom is false', async () => {
+            const rooms = [{
+                ...room,
+                isNighttimeRoom: false,
+            }];
+            const messages = {};
+
+            await adjustVentsToNighttimeState(rooms, messages, client);
+
+            expect(client.publish).toHaveBeenCalledTimes(1);
+            expect(client.publish).toHaveBeenCalledWith(vent.positionCommandTopic, vent.closePositionPayload);
         });
     });
 
