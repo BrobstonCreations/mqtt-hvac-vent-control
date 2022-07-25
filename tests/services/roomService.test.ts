@@ -118,6 +118,63 @@ describe('roomService', () => {
             expect(allRoomsAreAtDesiredTemperature(house, messages)).toBe(false);
         });
 
+        it('should return true if is night, is cooling, ' +
+            'and night room\'s actual temperatures are below target temperature', () => {
+            const modeStateTopic = 'stat/house/mode';
+            const modeNighttimePayload = 'night';
+            const messages = {
+                [modeStateTopic]: modeNighttimePayload,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [room1.actualTemperatureStateTopic]: '70',
+                [room1.targetTemperatureStateTopic]: '71',
+                [room2.actualTemperatureStateTopic]: '73',
+                [room2.targetTemperatureStateTopic]: '72',
+            };
+            const houseInNightMode = {
+                ...house,
+                modeNighttimePayload,
+                modeStateTopic,
+                rooms: [
+                    {
+                        ...room1,
+                        isNighttimeRoom: true,
+                    },
+                    room2,
+                ],
+            };
+
+            expect(allRoomsAreAtDesiredTemperature(houseInNightMode, messages)).toBe(true);
+        });
+
+        it('should return false if is day, is cooling, ' +
+            'and night room\'s actual temperatures are below target temperature', () => {
+            const modeStateTopic = 'stat/house/mode';
+            const modeNighttimePayload = 'night';
+            const modeDaytimePayload = 'day';
+            const messages = {
+                [modeStateTopic]: modeDaytimePayload,
+                [thermostat.modeStateTopic]: thermostat.coolModePayload,
+                [room1.actualTemperatureStateTopic]: '70',
+                [room1.targetTemperatureStateTopic]: '71',
+                [room2.actualTemperatureStateTopic]: '73',
+                [room2.targetTemperatureStateTopic]: '72',
+            };
+            const houseInNightMode = {
+                ...house,
+                modeNighttimePayload,
+                modeStateTopic,
+                rooms: [
+                    {
+                        ...room1,
+                        isNighttimeRoom: true,
+                    },
+                    room2,
+                ],
+            };
+
+            expect(allRoomsAreAtDesiredTemperature(houseInNightMode, messages)).toBe(false);
+        });
+
         it('should return false if no messages', () => {
             const messages = {};
 
