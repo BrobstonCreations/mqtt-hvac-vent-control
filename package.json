@@ -1,11 +1,11 @@
 {
-  "name": "whole-home-hvac-control-mqtt",
-  "version": "1.2.1",
-  "description": "This project is intended to bring together all things mqtt based to make your home more comfortable from a temperature perspective.",
+  "name": "mqtt-hvac-vent-control",
+  "version": "1.0.0",
+  "description": "This project is intended to bring together a thermostat, tempertaure sensors, and smart vents to make your home more comfortable.",
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TonyBrobston/whole-home-hvac-control-mqtt"
+    "url": "https://github.com/TonyBrobston/mqtt-hvac-vent-control"
   },
   "scripts": {
     "build": "rm -rf lib && tsc",
