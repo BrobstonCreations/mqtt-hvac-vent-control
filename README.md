@@ -3,7 +3,7 @@ This project is intended to bring together a thermostat, tempertaure sensors, an
 
 ## Getting Started
 1. Home Assistant
-- Create a bridge to expose your thermostat to the MQTT broker through the use of automations.
+- Create a bridge to expose your thermostat to the MQTT broker through the use of [automations](/MQTT_AUTOMATIONS.md).
 - Create [MQTT HVAC](https://www.home-assistant.io/integrations/climate.mqtt/) entities for rooms.
 2. Temperature Sensors
 - Any temperature sensor that can be exposed to the MQTT broker should work, I'm using [Shelly H&T](https://shelly.cloud/products/shelly-humidity-temperature-smart-home-automation-sensor/) currently.
