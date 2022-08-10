@@ -18,6 +18,16 @@ This project is intended to bring together a thermostat, tempertaure sensors, an
 - Eventually I will publish a Docker Image to Docker Hub, but for now you will need to use the DockerFile in this project to build your own local image. I currently run Home Assistant and this project using [Docker Compose on an Ubuntu Server](https://github.com/TonyBrobston/tbro-server/blob/1807110b9a0e4be52087e243b67bff6fa52bc397/home-automation/docker-compose.yml#L75-L80). If you are running Home Assistant on a Raspberry Pi, this can likely be ran using Portainer. I also assume this will run fine on Unraid, however I have not tested that method.
 
 ## Future features
+- Add the ability to store secrets.
+- Add the ability to predefine the number of vents to keep open at all times.
+- Publish messages when system is online/offline (Last Will and Testament).
+- Subscribe to vent online/offline and publish warnings.
+- Analyze actual vs. target temperature comparison as well as whole number vs. decimal.
+- Research QoS and determine if changes need made.
+- Add retain as a configuration option.
+- Consolidate test data creation (consider using factories).
+- Refactor room service to publish mode based on thermostat and vent state.
+- Setup GitHub Actions to run test/lint on pull requests.
 
 ## Philosophy
 
