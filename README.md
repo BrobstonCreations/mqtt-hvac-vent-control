@@ -28,6 +28,7 @@ This project is intended to bring together a thermostat, tempertaure sensors, an
 - Consolidate test data creation (consider using factories).
 - Refactor room service to publish mode based on thermostat and vent state.
 - Setup GitHub Actions to run test/lint on pull requests.
+- Look into adding functionality to push latest yet-another-smart-vent version to vents through ArduinoOTA.
 
 ## Philosophy
 
