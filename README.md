@@ -3,6 +3,7 @@ This project is intended to bring together a thermostat, tempertaure sensors, an
 
 ## Getting Started
 1. Home Assistant
+    - Currently this system requires that you have a thermostat integrated into Home Assistant.
     - Create a bridge to expose your thermostat to the MQTT broker through the use of [automations](/examples/MQTT_AUTOMATIONS.md).
     - Create [MQTT HVAC entities for rooms](/examples/MQTT_HVAC.md).
 2. Temperature Sensors
