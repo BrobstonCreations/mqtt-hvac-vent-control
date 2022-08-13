@@ -1,4 +1,4 @@
-# mqtt-hvac-vent-control
+# MQTT HVAC Vent Control 
 This project is intended to bring together a thermostat, tempertaure sensors, and smart vents to make your home more comfortable.
 
 ## Getting Started
