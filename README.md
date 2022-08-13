@@ -18,7 +18,7 @@ This project is intended to bring together a thermostat, tempertaure sensors, an
     - In order to create the configuration to run this system, you need to understand the basic structure; I made it as straight forward as I could. The [TypeScript types](https://github.com/TonyBrobston/mqtt-hvac-vent-control/blob/master/src/types/Mqtt.ts) can serve as documentation. In general, a House has a Thermostat and Rooms... and a Room consistents of Vents. Each of these Types also has command and state topics, as well as payloads for different commands or states. Here is [my configuration file](https://github.com/TonyBrobston/tbro-server/blob/master/home-automation/mqtt-hvac-vent-control/options.json) which is stored as [JSON](https://www.json.org/json-en.html).
     - Eventually I will publish a Docker Image to Docker Hub, but for now you will need to use the DockerFile in this project to build your own local image. I currently run Home Assistant and this project using [Docker Compose on an Ubuntu Server](https://github.com/TonyBrobston/tbro-server/blob/master/home-automation/docker-compose.yml). If you are running Home Assistant on a Raspberry Pi, this can likely be ran using Portainer. I also assume this will run fine on Unraid, however I have not tested that method.
 
-## Future features
+## Future Features
 - Publish Docker Image to Docker Hub.
 - Add the ability to store secrets.
 - Add the ability to predefine the number of vents to keep open at all times.
