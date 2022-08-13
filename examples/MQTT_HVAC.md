@@ -1,7 +1,7 @@
 
 # Home Assistant MQTT HVAC
 
-Here is a yaml example of how to add a Home Assistant [MQTT HVAC](https://www.home-assistant.io/integrations/climate.mqtt/) entity in order to subscribe/publish information to the `mqtt-hvac-vent-control` system.
+Here is a yaml example of how to add a Home Assistant [MQTT HVAC](https://www.home-assistant.io/integrations/climate.mqtt/) entity in order to subscribe/publish information to the MQTT HVAC Vent Control system.
 
 ```yaml
 climate:
