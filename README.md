@@ -1,6 +1,9 @@
 # MQTT HVAC Vent Control 
 This project is intended to bring together a thermostat, tempertaure sensors, and smart vents to make your home more comfortable.
 
+![image](https://user-images.githubusercontent.com/4724577/184554335-28a964c4-4650-4a7c-8759-7eb4af0e5048.png)
+![image](https://user-images.githubusercontent.com/4724577/184554408-de4c0a6e-1069-4a44-be5a-6105de5c4d61.png)
+
 ## Getting Started
 1. Home Assistant
     - Currently this system requires that you have a thermostat integrated into Home Assistant.
