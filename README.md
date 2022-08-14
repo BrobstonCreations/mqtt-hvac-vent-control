@@ -33,7 +33,16 @@ This project is intended to bring together a thermostat, tempertaure sensors, an
 - Look into adding functionality to push latest yet-another-smart-vent version to vents through ArduinoOTA.
 
 ## Philosophy
+- Local Control
+- External Integration
+- Easy of Use (this will improve over time)
+- Community Feedback
+- Community Contributions
+- Agile, Lean, and Extreme Programming Practices
+- Test Driven Development
 
 ## Pull Requests
+Pull Requests are always welcome. I would recommend starting with an [issue](https://github.com/TonyBrobston/mqtt-hvac-vent-control/issues), so that we can discuss viability and implementation.
 
-## Bugs
+## Issues
+Feel free to open an [issue](https://github.com/TonyBrobston/mqtt-hvac-vent-control/issues) and I will respond as I have time. The hope is to create a system that gives consumers what they want, your feedback is important. 
