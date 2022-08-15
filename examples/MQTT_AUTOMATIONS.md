@@ -2,6 +2,8 @@
 
 Here are some yaml examples of how to add Home Assistant Automations in order to subscribe/publish information for your thermostat. These automations act as a bridge to add MQTT functionality to a thermostat that otherwise does not have it. The `alias` describes what the automation does.
 
+Also if you're using an Ecobee I would recommend setting up your thermostat through the [HomeKit Controller Integration](https://www.home-assistant.io/integrations/homekit_controller/) rather than the [Ecobee Integration](https://www.home-assistant.io/integrations/ecobee/). In the case of Ecobee Thermostats, HomeKit communication is done locally; if your internet does out, this system should continue functioning.
+
 ```yaml
 alias: Publish MQTT State when Ecobee Action Changes
 trigger:
