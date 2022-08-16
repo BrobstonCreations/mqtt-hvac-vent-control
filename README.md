@@ -1,5 +1,5 @@
 # MQTT HVAC Vent Control 
-This project is intended to bring together a thermostat, tempertaure sensors, and smart vents to make your home more comfortable.
+This project is intended to bring together a thermostat, temperature sensors, and smart vents to make your home more comfortable.
 
 ![image](https://user-images.githubusercontent.com/4724577/184554335-28a964c4-4650-4a7c-8759-7eb4af0e5048.png)
 ![image](https://user-images.githubusercontent.com/4724577/184554530-deefc180-39fc-4a3f-83d5-a1e775e62f94.png)
