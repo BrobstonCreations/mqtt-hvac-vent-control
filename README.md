@@ -25,7 +25,7 @@ Currently I would consider this system experimental and would not recommend runn
     - You can pull down this Docker Image from Docker Hub. `docker pull brobstoncreations/mqtt-hvac-vent-control`. I currently run Home Assistant and this project using [Docker Compose on an Ubuntu Server](https://github.com/TonyBrobston/tbro-server/blob/master/home-automation/docker-compose.yml). If you are running Home Assistant on a Raspberry Pi, this can likely be ran using Portainer. I also assume this will run fine on Unraid, however I have not tested that method.
 
 ## Future Features
-- Add the ability to monitor Delta T (the difference in temperature of the air between return plenum and the main plenum). 
+- Add the ability to monitor Delta T (the difference in temperature of the air between the return plenum and the main plenum). 
 - Add the ability to predefine the number of vents to keep open at all times.
 - Add the ability to store secrets.
 - Publish messages when system is online/offline (Last Will and Testament).
