@@ -1,6 +1,8 @@
 # MQTT HVAC Vent Control 
 This project is intended to bring together a thermostat, temperature sensors, and smart vents to make your home more comfortable.
 
+Currently I would consider this system experimental and would not recommend running this system all the time. See the [Future Features](https://github.com/TonyBrobston/mqtt-hvac-vent-control#future-features) for more context.
+
 ![image](https://user-images.githubusercontent.com/4724577/184554335-28a964c4-4650-4a7c-8759-7eb4af0e5048.png)
 ![image](https://user-images.githubusercontent.com/4724577/184554530-deefc180-39fc-4a3f-83d5-a1e775e62f94.png)
 
@@ -23,8 +25,9 @@ This project is intended to bring together a thermostat, temperature sensors, an
     - You can pull down this Docker Image from Docker Hub. `docker pull brobstoncreations/mqtt-hvac-vent-control`. I currently run Home Assistant and this project using [Docker Compose on an Ubuntu Server](https://github.com/TonyBrobston/tbro-server/blob/master/home-automation/docker-compose.yml). If you are running Home Assistant on a Raspberry Pi, this can likely be ran using Portainer. I also assume this will run fine on Unraid, however I have not tested that method.
 
 ## Future Features
-- Add the ability to store secrets.
+- Add the ability to monitor Delta T (the difference in temperature of the air between return plenum and the main plenum). 
 - Add the ability to predefine the number of vents to keep open at all times.
+- Add the ability to store secrets.
 - Publish messages when system is online/offline (Last Will and Testament).
 - Subscribe to vent online/offline and publish warnings.
 - Analyze actual vs. target temperature comparison as well as whole number vs. decimal.
