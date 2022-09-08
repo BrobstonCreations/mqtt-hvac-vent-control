@@ -1,7 +1,7 @@
 # MQTT HVAC Vent Control 
 This project is intended to bring together a thermostat, temperature sensors, and smart vents to make your home more comfortable.
 
-Currently I would consider this system experimental and would not recommend running this system all the time. See the [Future Features](https://github.com/TonyBrobston/mqtt-hvac-vent-control#future-features) for more context.
+Currently I would consider this system experimental and would not recommend running this system all the time. See the [Future Features](https://github.com/TonyBrobston/mqtt-hvac-vent-control#future-features) for more context. Also, see [this issue](https://github.com/BrobstonCreations/mqtt-hvac-vent-control/issues/3) before you run this project.
 
 ![image](https://user-images.githubusercontent.com/4724577/184554335-28a964c4-4650-4a7c-8759-7eb4af0e5048.png)
 ![image](https://user-images.githubusercontent.com/4724577/184554530-deefc180-39fc-4a3f-83d5-a1e775e62f94.png)
